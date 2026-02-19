@@ -1,0 +1,107 @@
+A) Title (1 line)
+Analytical Framework for Supraharmonic Aggregation Under Spatial Uncertainty Using Point Process Theory
+B) Outline with word counts (total counted words = 15,000)
+•	0. Abstract — [250] words
+•	0.1 Keywords — [30] words
+•	1. Introduction — [2,100] words
+o	1.1 Supraharmonics (2–150 kHz) as an emerging power-quality problem — [450] words
+o	1.2 EV chargers and converter-interfaced loads as dominant stochastic sources — [350] words
+o	1.3 Why aggregation is statistical (asynchrony, cancellation, impedance selectivity) — [400] words
+o	1.4 Spatial uncertainty and limitations of feeder-specific simulations for generalisation — [450] words
+o	1.5 Contributions, novelty, and scope (what is/is not claimed) — [300] words
+o	1.6 Paper roadmap — [150] words
+•	2. Analytical Framework and Methods — [5,900] words
+o	2.1 Problem definition and target quantity at the PCC — [450] words
+	2.1.1 PCC definition; frequency-by-frequency analysis quantity
+	2.1.2 Transformer-level aggregation metric(s): complex phasor, magnitude, band summaries
+o	2.2 Network–source abstraction and modelling assumptions — [700] words
+	2.2.1 LTI small-signal superposition; quasi-stationarity window
+	2.2.2 Independence structure; what breaks if assumptions fail
+	2.2.3 Well-posedness conditions (bounded domain vs asymptotic regime)
+o	2.3 Spatial deployment model and spatial uncertainty regimes — [700] words
+	2.3.1 Bounded service region vs infinite-plane scaling thought experiment
+	2.3.2 Baseline homogeneous PPP; interpretation of intensity as “active charger density”
+	2.3.3 Spatial uncertainty extensions: uncertain service radius/shape; uncertain PCC siting; thinning/activity
+o	2.4 Electrical mark model for supraharmonic sources — [700] words
+	2.4.1 Norton injection representation; magnitude–phase marks
+	2.4.2 Internal admittance/absorption term and its analytical role
+	2.4.3 Optional mark enrichments: multi-class chargers; frequency-dependent mark parametrisation
+o	2.5 Propagation kernel (transfer impedance) and integrability conditions — [850] words
+	2.5.1 Transfer impedance kernel definition and physical interpretation
+	2.5.2 Distance vs electrical-distance formulations; feeder-archetype conditioning
+	2.5.3 Attenuation envelopes and conditions guaranteeing finite moments
+o	2.6 Aggregate voltage as a marked shot-noise functional — [500] words
+	2.6.1 Shot-noise representation; decomposition of spatial/mark/propagation randomness
+	2.6.2 Mean cancellation under phase diversity; interpretation for supraharmonics
+o	2.7 Point-process analysis and closed-/semi-closed-form statistics — [1,100] words
+	2.7.1 Campbell’s theorem for first-order statistics
+	2.7.2 PGFL/Laplace functional for marked PPP; second-order behaviour
+	2.7.3 RMS scaling laws with intensity; coherent vs incoherent limits
+	2.7.4 Boundedness proofs roadmap (main text vs appendix placement)
+o	2.8 Tail metrics and “risk-style” quantities for planning — [400] words
+	2.8.1 Percentiles/CCDF of |V|; exceedance probabilities for compatibility-style thresholds
+	2.8.2 Approximations (e.g., Gaussian/Rice-type surrogates) and validity checks
+o	2.9 Numerical scheme and validation protocol — [500] words
+	2.9.1 Monte Carlo generation consistent with the point process model
+	2.9.2 Deterministic quadrature for analytical integrals; error controls
+	2.9.3 Feeder-level benchmark protocol: kernel extraction and forward aggregation comparison
+	2.9.4 Reproducibility: parameter sets, seeds, and reporting conventions
+•	3. Results — [3,550] words
+o	3.1 Experimental design, parameterisation, and reporting conventions — [400] words
+	Frequency grid; kernel families; emission-mark distributions; activity factors; scenarios
+o	3.2 Baseline PPP aggregation statistics across frequency — [650] words
+	RMS vs frequency; contribution of absorption; representative percentiles
+o	3.3 Scaling with charger density and service-area size — [550] words
+	Empirical confirmation of √(intensity) scaling (bounded domain) and boundary effects
+o	3.4 Spatial uncertainty and inhomogeneity effects — [450] words
+	Uncertain region geometry; uncertain PCC; inhomogeneous intensity functions
+o	3.5 Robustness to phase coherence and electrical mark enrichments — [550] words
+	Phase-coherence transition from zero-mean to residual mean; random admittance and mark–kernel coupling
+o	3.6 Beyond PPP: clustered and repulsive deployments and tail behaviour — [450] words
+	Comparison of PPP vs cluster vs hard-core style patterns; implications for high percentiles
+o	3.7 Feeder-level benchmark validation — [500] words
+	Kernel-from-network vs isotropic/electrical-distance surrogate; error metrics for RMS and upper tails
+•	4. Discussion — [2,350] words
+o	4.1 Mechanistic interpretation — [650] words
+	How cancellation + propagation filtering jointly shape aggregation; why resonance-rich kernels can dominate tails
+o	4.2 Engineering implications for planning, hosting capacity, and standards alignment — [600] words
+	How to translate percentiles/exceedance into screening criteria; what compatibility levels would need from the model
+o	4.3 Domain of validity and limitations — [400] words
+	LTI linearisation; quasi-stationarity; independence assumptions; per-frequency treatment; measurement alignment limits
+o	4.4 Spatial uncertainty: what matters most and how to model it — [350] words
+	When PPP is adequate; when clustering/inhomogeneity must be used; guidance for practitioners
+o	4.5 Research extensions — [350] words
+	Multi-PCC network coupling; temporally varying activity; correlated marks; Bayesian calibration to measurements
+•	5. Conclusion — [650] words
+o	5.1 Summary of contributions and main takeaways — [350] words
+o	5.2 Future work — [300] words
+•	6. Declarations and Reproducibility Assets — [170] words
+o	6.1 Data/code availability statement — [80] words
+o	6.2 Reproducibility checklist (parameters, seeds, tolerances) — [70] words
+o	6.3 Conflict of interest / funding statement — [20] words
+•	7. References — [0] words (excluded from word-count target; journal-dependent)
+•	8. Appendices — [0] words (excluded; recommended for full derivations/proofs and numerical error details)
+C) Proposed Tables and Figures (Results + Discussion)
+• Table 1: Scenario matrix and baseline parameter set — Ensure reproducibility of Results — Frequency grid, intensity (active density), service-region size/shape, kernel family, mark distributions, activity probability
+• Table 2: Closed-form / semi-analytic expressions summary — Make the “analytical deliverables” explicit — Mean, variance/RMS, integrability conditions, scaling laws, coherence factor terms
+• Table 3: Baseline PPP results by frequency — Compact quantitative results — RMS(|V|), selected percentiles (e.g., 90/95/99%), exceedance probabilities
+• Table 4: Sensitivity/robustness summary — Identify dominant uncertainties — Effect sizes for inhomogeneity, clustering, phase coherence, admittance variability, mark–kernel coupling
+• Table 5: Feeder benchmark specification and extracted kernel features — Make benchmark transparent — Topology class, cable parameters, transformer impedance, fitted kernel parameters, validation scenarios
+• Table 6: Analytical vs feeder-simulated comparison metrics — Quantify agreement — Relative error (RMS, percentiles), calibration-free validation stats, confidence intervals
+• Figure 1: Transfer-impedance kernel magnitude vs (electrical) distance across frequencies — Line plot — Shows frequency-selective attenuation/resonance shaping the spatial kernel
+• Figure 2: RMS aggregate voltage vs active charger density — Log–log line plot — Demonstrates √(density) scaling in the incoherent regime and departures under coherence
+• Figure 3: Percentile design curves vs density and service-area size — Contour plot — Demonstrates how upper tails scale with deployment intensity and spatial extent
+• Figure 4: CCDF of |V| under PPP vs clustered vs repulsive deployments — Semi-log CCDF plot — Demonstrates tail inflation under clustering (spatial uncertainty effect)
+• Figure 5: Phase coherence sweep — Line plot — Demonstrates transition from near-zero mean (asynchronous) to residual mean (partially coherent) and its impact on risk metrics
+• Figure 6: Inhomogeneous intensity examples and resulting distortion outcomes — Panel plot (intensity heatmap + boxplots) — Demonstrates that “same mean density” can yield different tails
+• Figure 7: Feeder benchmark validation — Scatter plot (predicted vs simulated) — Demonstrates accuracy (or bias) for RMS and high-percentile metrics
+• Figure 8: Practical screening chart (“allowable density” vs frequency for a percentile limit) — Contour plot — Demonstrates how the framework can be used for planning decisions
+D) Notes (optional)
+•	Key assumptions (model validity): LTI small-signal superposition in 2–150 kHz; quasi-stationary analysis window; point-process deployment (PPP baseline); i.i.d. electrical marks with explicit phase-asynchrony model; deterministic (or class-conditioned) propagation kernel with integrability/attenuation ensuring finite moments; per-frequency analysis with no cross-frequency coupling.
+•	Missing inputs needed for best results (what to measure or specify):
+1.	Empirical emission magnitude distributions per charger class and operating state (by frequency bin).
+2.	Phase/asynchrony characterisation (or a justified coherence-factor range).
+3.	Small-signal input admittance distributions (or class-level deterministic admittance).
+4.	Transfer-impedance kernel vs electrical distance (or feeder-archetype kernels) across 2–150 kHz.
+5.	Spatial deployment prior: service-region geometry, intensity (active density), and whether clustering/inhomogeneity is expected (public hubs, multi-dwelling, etc.).
+

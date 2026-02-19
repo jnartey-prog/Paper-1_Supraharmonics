@@ -1,0 +1,12 @@
+{
+  "proposal_id": "supraharmonic-aggregation-baseline",
+  "version": 1,
+  "title": "Supraharmonic aggregation analytical and simulation workflow",
+  "objectives": [
+    "Provide analytical first and second order statistics",
+    "Evaluate integrability and tail behavior",
+    "Validate with Monte Carlo and benchmark comparisons",
+    "Generate reproducible artifacts and governance metadata"
+  ],
+  "status": "active"
+}

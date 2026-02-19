@@ -1,0 +1,21 @@
+# Virtual environments and local tooling
+.venv/
+.local/
+.uv-cache/
+
+# Python caches
+__pycache__/
+*.py[cod]
+
+# Test/runtime scratch
+.pytest_cache/
+.pytest_tmp/
+.tmp/
+pytest-cache-files-*/
+
+# Generated runtime outputs
+logs/
+manuscript/artifacts/
+
+# Local tool binary
+codex-x86_64-pc-windows-msvc.exe

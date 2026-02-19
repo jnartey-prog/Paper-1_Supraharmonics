@@ -1,0 +1,16 @@
+agents:
+  - id: A1
+    name: Model Formulation
+    spec: specs/A1.md
+  - id: A2
+    name: Statistical Analysis
+    spec: specs/A2.md
+  - id: A3
+    name: Integrability and Tail Metrics
+    spec: specs/A3.md
+  - id: A4
+    name: Monte Carlo Validation
+    spec: specs/A4.md
+  - id: A5
+    name: Artifact and Governance Pipeline
+    spec: specs/A5.md

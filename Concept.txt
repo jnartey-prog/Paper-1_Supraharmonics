@@ -1,0 +1,812 @@
+Analytical Framework for Supraharmonic Aggregation Under Spatial Uncertainty Using Point Process Theory
+ABSTRACT
+
+
+
+Keywords: Supraharmonic emissions, Electric vehicle chargers, Power quality, Stochastic geometry, Distribution networks
+INTRODUCTION
+Recent review studies describe non-intentional supraharmonic emissions in the 2–150 kHz range as a growing power-quality concern linked to the widespread use of power-electronic interfaces in modern electrical networks [1–5]. As power systems evolve through transport electrification, increased penetration of converter-interfaced generation, and digitally controlled loads, a growing share of electrical energy is processed by fast-switching semiconductor devices[6,7]. This shift has moved disturbance phenomena beyond the classical harmonic range and introduced broadband, high-frequency emissions whose system-level effects remain poorly understood. Reported impacts include increased transformer losses, dielectric stress, and interference with power-line communication systems, pointing to the need for analytical tools that can describe aggregate supraharmonic behaviour at the network level [8–10].
+Electric-vehicle chargers have emerged as a particularly important source within this frequency range, especially with the adoption of wide-bandgap semiconductor technologies such as SiC and GaN. Supraharmonic emissions from modern EV chargers differ fundamentally from classical harmonics [5,11–13]. They are broadband, asynchronous, and sensitive to control strategies, switching frequencies, and operating conditions [14,15]. Measurement and simulation studies reviewed in the literature consistently show large variability in both magnitude and spectral content across devices, even within the same charger class [16,17]. Combined with asynchronous operation, this variability challenges deterministic harmonic analysis approaches that rely on periodicity and coherence.
+International standards, including IEC 61000-4-7 and IEC 61000-4-30, establish harmonised measurement procedures and signal-processing methods for the measurement of supraharmonic emissions. These standards provide a consistent basis for characterisation and comparison but are largely limited to measurement and single-device assessment. As noted in recent reviews, they do not address how emissions from multiple devices operating simultaneously combine within a network [1,18]. Although indicative compatibility levels for supraharmonics are beginning to appear in the IEC 61000-2 and IEC 61000-3 series, these remain largely disconnected from questions of spatial deployment, phase diversity, and frequency-dependent network propagation. As a result, guidance on aggregate supraharmonic voltage distortion at the feeder or transformer level remains limited.
+Unlike classical harmonics below 2 kHz, where established summation laws enable deterministic aggregation, supraharmonic aggregation is inherently statistical. Aggregate behaviour in the 2-150 kHz range is shaped by asynchronous switching, phase diversity, and strongly frequency-dependent impedances, producing cancellation, beating, and resonance effects that vary with both space and frequency [9,17,19]. Measurement-based and simulation-based studies repeatedly show that simple worst-case summation or linear scaling assumptions fail to capture these effects [5,12,16]. Recent reviews, therefore, identify the absence of analytically tractable aggregation frameworks as a central open problem in supraharmonic research.
+Most existing work on aggregate supraharmonic distortion relies on numerical simulation or statistical analysis of measurements. Monte Carlo approaches are commonly used to explore variability arising from random charger placement and emission diversity [2,20], while circuit-based propagation models focus on resonance and attenuation in specific feeder configurations [1,21,22]. Although these studies offer valuable insights, they typically treat spatial randomness, emission variability, and network impedance separately or combine them only through feeder-specific simulations. This limits analytical tractability and makes it difficult to generalise results across deployment scenarios, particularly under spatial uncertainty [1,18].
+Against this background, the present work examines whether a stochastic-geometry-based formulation can capture the key statistical characteristics of aggregate transformer-level supraharmonic voltage distortion arising from spatially random EV-charger deployments, while remaining analytically tractable and independent of specific feeder layouts. EV chargers are modelled as a marked Poisson point process, and the aggregate supraharmonic voltage is represented as a spatial shot-noise process filtered by a frequency- and distance-dependent propagation kernel. Under clearly stated assumptions of linear propagation, phase asynchrony, and independent emission marks, the framework yields closed-form expressions for first-order statistics and supports systematic analysis of second-order behaviour without reliance on feeder-specific simulations.
+The framework is intended for statistical characterisation rather than site-specific prediction or regulatory compliance assessment. Its validity is examined by comparing predicted mean and high-percentile aggregate distortion levels with ranges reported in independent measurement-based and stochastic studies [12,16,18]. Within this scope, the approach provides a clear analytical basis for understanding how spatial randomness, phase diversity, and network propagation jointly shape aggregate supraharmonic behaviour in EV-rich networks.
+The remainder of the paper is organised as follows. Section 2 presents the stochastic-geometry-based modelling framework, including source abstraction, propagation modelling, and probabilistic formulation. Section 3 reports numerical results and comparative validation against values reported in the literature. Section 4 discusses implications, limitations, and modelling assumptions. Section 5 concludes the paper and outlines directions for future research.
+Theoretical Framework and Methods
+2.1 Problem Definition and Target Quantity
+This work addresses the problem of characterising the aggregate supraharmonic voltage distortion observed at a distribution transformer due to a spatially distributed population of electric vehicle (EV) chargers. The objective is to develop a mathematically rigorous analytical framework that captures the statistical behaviour of this aggregate quantity under spatial uncertainty and device-level randomness, while remaining independent of specific feeder layouts.
+
+2.1.1 Point of Common Coupling and Frequency Range
+The point of common coupling (PCC) is defined as the low-voltage terminal of the distribution transformer supplying a set of downstream feeders hosting EV chargers. All quantities of interest are evaluated at this reference point.
+The analysis focuses on the supraharmonic frequency band from 2 kHz to 150 kHz, consistent with contemporary power-quality standards and prior literature on non-intentional emissions from power-electronic converters. Within this band, network behaviour is assumed quasi-stationary over the analysis window, permitting a frequency-domain representation and independent treatment of each analysis frequency.
+
+2.1.2 Definition of the Aggregate Transformer-Level Quantity
+Let f\in[2,150] kHzdenote a fixed analysis frequency. The primary quantity of interest is the aggregate complex voltage phasor at the PCC resulting from the superposition of supraharmonic emissions injected by all active chargers connected to the network. This quantity is denoted by
+V_{agg}(f)\in\mathbb{C}.
+For notational compactness, we define
+V(f)\mathrm{\;\hairsp}\equiv\mathrm{\;\hairsp} V_{agg}(f),
+and use V(f)exclusively throughout the remainder of the paper.
+The quantity V(f)represents the steady-state frequency-domain response of a linear network to concurrent current injections and constitutes the central random variable analysed in this work. All statistical results are derived with respect to this complex-valued quantity. Derived scalar metrics—such as the magnitude \mid V(f)\mid, the squared magnitude \mid V(f)\mid^2, or band-aggregated measures—are treated only insofar as they follow directly from the statistical characterisation of V(f).
+
+2.1.3 Spatial Domain and Modelling Regimes
+The aggregate voltage V(f)is induced by a spatially distributed set of supraharmonic sources located in a service region
+D\subseteq\operatorname{R}^2\bigmrelative to the PCC, which is taken as the origin.
+
+Two modelling regimes are considered:
+	Bounded-domain regime
+The region Dis assumed to be bounded with finite area \mid D\mid<\infty. This regime represents realistic transformer service areas and is sufficient for feeder-level screening studies. In this case, existence of moments follows under minimal boundedness assumptions.
+	Infinite-domain (asymptotic) regime
+
+The region is extended to D=\operatorname{R}^2to study scaling behaviour and limiting aggregation properties as charger density increases. In this regime, existence of moments requires explicit attenuation and integrability conditions on the propagation kernel, which are stated formally in Section 2.4 and proved in Appendix B.
+Unless stated otherwise, analytical results explicitly specify which regime applies. No result relies simultaneously on incompatible domain assumptions.
+
+2.1.4 Scope and Nature of the Analysis
+The purpose of the proposed framework is statistical characterisation, not deterministic prediction. Specifically, the analysis aims to:
+	characterise ensemble-level behaviour (mean, variance, scaling laws);
+	identify conditions under which aggregate supraharmonic voltage remains bounded;
+	establish analytically tractable relationships between charger density, emission statistics, and aggregate response.
+The framework is not intended for:
+	site-specific feeder modelling;
+	resonance prediction under nonlinear or time-varying conditions;
+	regulatory compliance assessment;
+	real-time operational monitoring.
+All results are conditional on explicitly stated modelling assumptions and are valid within the domain of linear superposition, spatial randomness, and frequency-domain analysis.
+
+2.1.5 Modelling Perspective
+Rather than modelling a specific physical network instance, this work adopts a probabilistic system-level perspective. The aggregate voltage at the PCC is treated as a random field induced by a spatial point process of emission sources, filtered through a deterministic, frequency-dependent propagation kernel.
+This perspective enables closed-form or semi-analytical treatment of aggregate behaviour and reveals fundamental scaling and boundedness properties that are obscured in purely deterministic or simulation-only studies.
+
+2.2 Network–Source Abstraction and Core Assumptions
+This section formalises the abstraction of the electrical network and supraharmonic emission sources and states the modelling assumptions underpinning the analytical development.
+All assumptions are stated once and only once in this section. No additional assumption labels are introduced elsewhere; all subsequent sections refer back to Assumptions A1–A8.
+
+2.2.1 Linear Time-Invariant Network Representation
+Assumption A1 (Linear superposition and small-signal linearisation).
+In the supraharmonic frequency band 2–150 kHz, the distribution network is modelled as a linear time-invariant (LTI) system linearised around a steady operating point.
+For each fixed frequency f, the network response to concurrent current injections is governed by linear superposition.
+This assumption permits frequency-domain analysis and ensures that the aggregate voltage at the PCC can be written as a sum of individual source contributions. Nonlinear effects, intermodulation, frequency coupling, switching transients, and time-varying control actions are outside the scope of this work.
+
+2.2.2 Frequency-Domain Representation and Measurement Consistency
+Assumption A2 (Quasi-stationarity and spectral resolution).
+Within an analysis window T_w, network parameters and charger emission statistics are assumed wide-sense stationary in the IEC measurement sense.
+All quantities are represented in the frequency domain using discrete spectral components with resolution
+\Delta f=\frac{1}{T_w}.\bigm
+This assumption is consistent with IEC-aligned supraharmonic measurement procedures and justifies treating each analysis frequency independently. All analytical results are therefore per-frequency, with no implicit cross-frequency coupling.
+
+2.2.3 Charger Electrical Abstraction
+Assumption A3 (Norton source with absorption).
+At frequency f, charger iis modelled by a frequency-domain Norton equivalent comprising:
+	an injected supraharmonic current source I_{sh,i}(f)e^{j\phi_i(f)}, and
+	an internal admittance Y_i(f)representing frequency-dependent absorption.
+The Norton parameters are frequency-dependent but not time-varying within T_w. This abstraction captures both primary emission and secondary loading effects and is valid provided the charger’s small-signal behaviour around the operating point remains linear.
+
+2.2.4 Spatial and Mark Randomness Structure
+The stochastic structure of the model is defined as follows.
+Assumption A4 (Poisson spatial deployment).
+The locations of active supraharmonic sources are modelled as a homogeneous Poisson point process
+\Phi\subset D\subset\operatorname{R}^2\bigm
+with intensity \lambda.
+The process is stationary, isotropic, and statistically independent of all electrical marks.
+The intensity \lambda represents the density of active chargers at frequency fand may be interpreted as the installed charger density multiplied by an independent activity probability (independent thinning).
+
+Assumption A5 (Mark independence across chargers).
+For distinct chargers i\neq j, the emission marks
+\left\{I_{sh,i}(f),\phi_i(f)\right\}\bigm
+are independent and identically distributed across chargers and independent of the spatial point process \Phi.
+Assumption A6 (Phase randomness and asynchrony).
+Phase angles \phi_i(f)are independent and identically distributed on [0,2\pi), unless stated otherwise in sensitivity analyses.
+This assumption represents asynchronous switching and lack of coordination among chargers and is the primary mechanism leading to cancellation and sublinear aggregation.
+All results requiring phase cancellation rely only on the weaker condition
+\mathbb{E}[e^{j\phi_i(f)}]=0,
+
+with uniformity serving as the baseline case.
+2.2.5 Statistical Treatment of Internal Admittance
+Assumption A7 (Deterministic internal admittance).
+The internal admittance is treated as deterministic for a given charger class and frequency:
+Y_i(f)\equiv Y(f),\forall i.\bigm
+This choice isolates the effects of spatial randomness and phase diversity and avoids conflating absorption variability with emission variability. Extensions to random or correlated admittance marks are possible but are not analysed in this paper.
+2.2.6 Attenuation and Well-Posedness Conditions
+Assumption A8 (Propagation attenuation and denominator separation).
+The magnitude of the network transfer impedance satisfies
+\mid Z_{tr}(f,d)\mid\le C_f\mathrm{\thinsp} a_f(d),\bigm
+where a_f(d)is a non-increasing envelope function ensuring integrability of the aggregate response over the spatial domain.
+Additionally, there exists a constant c_0>0such that
+\mid1+Y(f)Z_{tr}(f,d)\mid\geq c_0\mathrm{for\ all\ }d\in D.\bigm
+These conditions guarantee existence of the first and second moments derived in Sections 2.7–2.9 and underpin the boundedness results proved in Appendix B.
+
+2.2.7 Modelling Implications
+Under Assumptions A1–A8:
+	the aggregate voltage at the PCC is a complex-valued shot-noise functional of a marked Poisson point process;
+	first- and second-order statistics follow from Campbell’s theorem and the probability-generating functional;
+	violations of these assumptions (e.g. phase correlation, spatial clustering, nonlinear behaviour) lead to predictable and interpretable breakdowns of the analytical results.
+2.3 Electrical Mark Model of Supraharmonic Sources
+This section defines the electrical mark model associated with each supraharmonic source and specifies how individual charger emissions enter the aggregate voltage formulation. The model is stated at a fixed analysis frequency f, with frequency dependence suppressed in notation where unambiguous.
+
+2.3.1 Frequency-Domain Norton Injection Model
+Under Assumption (A3), each charger is represented at frequency fby a Norton equivalent comprising a current source in parallel with an internal admittance. The injected supraharmonic current of charger iis modelled as the complex phasor
+\begin{matrix}&I_i(f)=I_{sh,i}(f)\mathrm{\thinsp} e^{j\phi_i(f)},&&\mathrm{(2.3-1)}\\\end{matrix}\bigmwhere:
+	I_{sh,i}(f)\geq0denotes the emission magnitude,
+	\phi_i(f)\in[0,2\pi)denotes the emission phase angle.
+The pair \left(I_{sh,i}(f),\phi_i(f)\right)constitutes the primary electrical mark, capturing both amplitude variability and phase asynchrony across chargers.
+2.3.2 Internal Admittance Model \mathbit{Y}(\mathbit{f})and Modelling Limits
+Each charger is assumed to present an internal admittance Y(f)to the network at frequency f, representing the small-signal absorption behaviour of its input stage. Consistent with Assumption (A7), the admittance is treated as deterministic and identical across chargers:
+\begin{matrix}&Y_i(f)\equiv Y(f).&&\mathrm{(2.3-2)}\\\end{matrix}\bigm
+In the supraharmonic band, the dominant contribution is often capacitive, and Y(f)may be approximated by
+\begin{matrix}&Y(f)=j\mathrm{\thinsp}2\pi f\mathrm{\thinsp}C_{eq},&&\mathrm{(2.3-3)}\\\end{matrix}
+where C_{eq}is an equivalent capacitance.
+More general bounded, frequency-dependent admittance models are admissible provided they satisfy the attenuation and bounded-response conditions stated in Assumption (A8). Nonlinear, time-varying, or control-dependent effects within the charger are neglected; such effects may alter emission statistics but do not affect the structure of the aggregation framework developed here.
+
+2.3.3 Reduced Effective Injection Used in Aggregation
+Let Z_{tr}(f,d_i)denote the transfer impedance between charger i, located at distance d_ifrom the PCC, and the PCC itself. Due to the parallel combination of the Norton current source and the internal admittance, only a fraction of the injected current contributes to the PCC voltage.
+Accordingly, the effective injected current entering the aggregation is defined as
+\begin{matrix}&{\widetilde{I}}_i(f)=\frac{I_{sh,i}(f)\mathrm{\thinsp} e^{j\phi_i(f)}}{1+Y(f)\mathrm{\thinsp}Z_{tr}(f,d_i)}.&&\mathrm{(2.3-4)}\\\end{matrix}\bigm
+This reduced form incorporates both emission and absorption effects and is the exact quantity that appears in the aggregate voltage expression. It ensures that chargers located closer to the PCC or presenting stronger absorption contribute proportionally less to the aggregate voltage.
+2.3.4 Location-Dependent Effective Injection (Mark–Kernel Coupling Extension)
+Assumption A5 treats emission marks as statistically independent of spatial location.
+In practical distribution networks, however, the effective supraharmonic current injected by a charger can depend on the electrical environment at the point of connection. In particular, the local driving-point impedance of the network influences both the magnitude of current injected into the feeder and the fraction of emission absorbed locally. This introduces a potential dependence between emission characteristics and network propagation conditions.
+To capture this effect while preserving analytical tractability, a minimal location-dependent effective injection model is introduced.
+Let
+Z_{loc}(f,x)\bigm
+denote the local driving-point impedance of the network at the connection location x, representing the Thevenin or Norton equivalent seen by the charger at frequency f.
+The emitted supraharmonic current magnitude is then allowed to depend on this local impedance through a measurable response function
+I_{sh,i}(f,x_i)=\mathcal{G}_f\mathrm{\thinsp}\left(Z_{loc}(f,x_i),\mathrm{\thinsp} \xi_i\right),\bigm
+where
+	\mathcal{G}_f(\cdot)is a deterministic coupling function,
+	\xi_iis an i.i.d. intrinsic emission variable independent of location,
+	Z_{loc}(f,x)is a deterministic network property.
+The intrinsic variability of charger emissions is therefore retained, while allowing systematic modulation by the electrical connection environment.
+The complex injected current becomes
+I_i(f,x_i)=\mathcal{G}_f\mathrm{\thinsp}\left(Z_{loc}(f,x_i),\mathrm{\thinsp} \xi_i\right)e^{j\phi_i}.\bigm
+Substituting into the effective injection expression (2.3-4) yields the location-dependent reduced current
+{\widetilde{I}}_i(f)=\frac{\mathcal{G}_f\mathrm{\thinsp} \left(Z_{loc}(f,x_i),\mathrm{\thinsp} \xi_i\right)e^{j\phi_i}}{1+Y(f)Z_{tr}(f,d_i)}.\bigm
+Accordingly, the aggregation kernel becomes
+g(f,x,m)=\frac{Z_{tr}(f,\parallel x\parallel)\mathrm{\thinsp} \mathcal{G}_f\mathrm{\thinsp} \left(Z_{loc}(f,x),\mathrm{\thinsp} \xi\right)e^{j\phi}}{1+Y(f)Z_{tr}(f,\parallel x\parallel)}.\bigm
+All moment expressions derived in Sections 2.8–2.9 remain valid provided the modified kernel satisfies the same integrability and boundedness conditions stated in Assumption A8.
+
+2.3.5 Partial Phase Coherence and Correlation Robustness
+Assumption A6 models emission phases as independent and uniformly distributed, representing asynchronous switching among chargers. In practice, switching frequencies may concentrate within narrow bands and control behaviour may introduce weak phase alignment over finite time windows. This can produce partial coherence among emission phases and reduce cancellation effects.
+To assess sensitivity to phase independence, a correlated phase model is introduced for robustness analysis.
+
+Common-random phase decomposition
+Let the emission phase of charger ibe represented as
+\phi_i(f)=\psi(f)+\varepsilon_i(f),\bigm
+where
+	\psi(f)is a common phase component shared across chargers,
+	\varepsilon_i(f)are i.i.d. residual phases independent across chargers.
+The degree of phase coherence is controlled by the concentration of the residual phase distribution.
+A convenient parameterisation is obtained using a circular distribution with concentration parameter \kappa\geq0, such that
+\mathbb{E}\mathrm{\thinsp}\left[e^{j\varepsilon_i(f)}\right]=\rho,0\le\rho\le1,\bigm
+where \rhois the phase coherence factor.
+Special cases:
+	\rho=0: fully asynchronous phases (independent uniform distribution), recovering Assumption A6.
+	\rho=1: perfect phase alignment (fully coherent emissions).
+
+Effect on aggregate mean
+Under partial coherence,
+\mathbb{E}[e^{j\phi_i(f)}]=ρ ejψ(f).
+
+The aggregate voltage mean therefore becomes
+\mathbb{E}[V(f)]=ρ ejψ(f)λDEm g0(f,x,m)dx,
+
+where g_0denotes the aggregation kernel excluding the phase factor.
+Thus mean cancellation occurs only when \rho=0.
+Any non-zero coherence produces a residual deterministic component proportional to \rho.
+
+2.3.6 Random Internal Admittance and Absorption Variability
+Assumption A7 models the internal admittance of each charger as deterministic for a given class and frequency. In practice, small-signal admittance varies across devices and operating conditions due to component tolerances, control states, temperature, and grid voltage. This variability affects both local absorption and effective current injection into the network.
+To account for this, internal admittance is extended to a random electrical mark.
+Random admittance mark
+Each charger is assigned an admittance
+Y_i(f),\bigm
+drawn independently from a non-negative distribution F_Y(\cdot)with finite moments:
+\mathbb{E}[\mid Y_i(f)\mid]<∞,E[∣Yi(f)∣2]<∞.
+
+The vector electrical mark becomes
+m_i(f)=(I_{sh,i}(f),\mathrm{\thinsp}\phi_i(f),\mathrm{\thinsp} Y_i(f)).\bigm
+Modified effective injection
+The reduced current entering the aggregation becomes
+{\widetilde{I}}_i(f)=\frac{I_{sh,i}(f)e^{j\phi_i(f)}}{1+Y_i(f)\mathrm{\thinsp} Z_{tr}(f,x_i)}.\bigm
+The aggregation kernel is therefore
+g(f,x,m)=\frac{Z_{tr}(f,x)\mathrm{\thinsp} I_{sh}(f)e^{j\phi}}{1+Y(f)\mathrm{\thinsp}Z_{tr}(f,x)}.\bigm
+Analytical validity
+All moment expressions derived in Sections 2.8–2.9 remain valid provided the denominator separation condition holds almost surely:
+\mid1+Y_i(f)\mathrm{\thinsp} Z_{tr}(f,x)\mid\geq c_0>0,\bigm
+and the integrability conditions of Assumption A8 are satisfied with respect to the joint mark distribution.
+Under these conditions, admittance variability modifies only the statistical distribution of the aggregation kernel and does not alter the structure of the shot-noise functional or the boundedness results.
+2.4 Deterministic Propagation Kernel \mathbit{Z}_{\mathbf{tr}}(\mathbit{f},\mathbit{d})
+This section defines the deterministic propagation kernel that maps an injected supraharmonic current at distance dfrom the PCC to a voltage contribution at the PCC. The kernel encapsulates all network-side propagation effects and serves as the spatial weighting function in the aggregate response.
+
+2.4.1 Distributed-Parameter Construction
+Propagation of supraharmonic currents along low-voltage feeders is modelled using a distributed-parameter representation. Each feeder segment is characterised by frequency-dependent per-unit-length parameters R(f), L(f), G(f), and C(f), and is represented either:
+	as a cascade of uniform \pi-sections, or
+	equivalently, via continuous transmission-line (telegrapher’s) equations.
+For a feeder of electrical length d, the relationship between sending-end and receiving-end voltage and current phasors at frequency fis expressed using the ABCD-matrix formalism. Cascading feeder sections yields a well-defined linear mapping between the injected current at the charger connection point and the resulting voltage at the PCC.
+The explicit construction details are not required in the analytical derivations; only the existence and regularity of the resulting transfer impedance are assumed.
+2.4.2 Transformer Embedding and Boundary Conditions
+The distribution transformer at the PCC is embedded as a linear terminal impedance Z_{PCC}(f). Boundary conditions are imposed such that:
+	the PCC voltage is measured across Z_{PCC}(f),
+	injected currents propagate toward the PCC through the feeder network,
+	reflections and frequency-dependent attenuation are implicitly captured by the distributed model.
+The resulting transfer impedance incorporates both feeder propagation and transformer loading effects. No assumption of purely radial topology is required; the kernel represents the effective linear response between any source location and the PCC.
+2.4.3 Formal Kernel Definition and Analytical Properties
+The transfer impedance kernel is formally defined as
+\begin{matrix}&Z_{tr}(f,d)\mathrm{\;\hairsp} \Deltaeq\mathrm{\;\hairsp} \frac{V_{PCC}(f)}{I_{inj}(f)}\mathrm{for\ a\ unit\ current\ injection\ at\ distance\ } d.&&\mathrm{(2.4-1)}\\\end{matrix}
+For analytical purposes, Z_{tr}(f,d)is assumed to satisfy:
+P1 (Determinism). For fixed fand d, Z_{tr}(f,d)is deterministic.
+P2 (Measurability and continuity). The mapping d\mapsto Z_{tr}(f,d)is measurable and piecewise continuous for d\geq0.
+P3 (Distance-dependent attenuation). There exist a non-increasing envelope function a_f(d)and a constant C_f<\inftysuch that
+\begin{matrix}&\mid Z_{tr}(f,d)\mid\le C_f\mathrm{\thinsp} a_f(d),&&\mathrm{(2.4-2)}\\\end{matrix}\bigmwith a_f(d)ensuring integrability over the spatial domain.
+P4 (Bounded effective response). The modified kernel appearing in the aggregation,
+\begin{matrix}&\frac{Z_{tr}(f,d)}{1+Y(f)\mathrm{\thinsp}Z_{tr}(f,d)},&&\mathrm{(2.4-3)}\\\end{matrix}
+is bounded for all din the domain of interest.
+These properties are sufficient to guarantee existence of the moments derived in Section 2.8 and to establish the boundedness results proved in Appendix B.
+2.4.4 Electrical-Distance and Topology-Aware Propagation
+The baseline formulation represents the transfer impedance as a function of Euclidean distance from the PCC. In practical low-voltage networks, however, propagation of supraharmonic currents is governed primarily by electrical path structure — feeder routing, branching, terminations, and loading  rather than geometric distance alone. To account for this, the propagation model is extended to use a topology-aware propagation coordinate.
+
+Electrical-distance substitution
+Let
+d_e(x)\bigm
+denote an electrical path-length proxy between a source location xand the PCC, representing feeder route length or an impedance-weighted path along the network graph.
+The transfer impedance is then written as
+Z_{tr}(f,x)\equiv Z_{tr}\mathrm{\thinsp}\left(f,d_e(x)\right).\bigm
+The aggregate voltage expression remains
+V(f)=\sum_{x_i\in\Phi}\frac{Z_{tr}(f,x_i)\mathrm{\thinsp} I_i(f)e^{j\phi_i}}{1+Y(f)Z_{tr}(f,x_i)}.\bigm
+All analytical derivations remain valid provided the integrability and bounded-response conditions of Assumption A8 hold with the modified kernel Z_{tr}(f,x). Spatial expectations are evaluated over the full service region without requiring isotropic radial reduction.
+
+Feeder-archetype conditioning
+To represent heterogeneous feeder topologies, propagation is optionally conditioned on a discrete feeder class. Each charger is associated with a topology class mark
+T_i\in{1,\ldots,K},\bigm
+with probabilities \mathbb{P}(T_i=k)=\pi_k.
+Conditional on class k, propagation follows a class-specific kernel:
+Z_{tr}(f,x_i)=Z_{\operatorname{tr}}^{\left(k\right)}(f,x_i).\bigm
+Aggregate statistics are obtained by averaging over topology classes within the marked point process expectation.
+2.5 Spatial Deployment Model (Point Process)
+This section formalises the spatial distribution of supraharmonic sources supplying the PCC. Spatial randomness is introduced to capture deployment uncertainty while preserving analytical tractability.
+2.5.1 Spatial Domain and Reference Geometry
+Let D\subseteq\operatorname{R}^2denote the service region supplied by the transformer at the PCC, which is taken as the origin o\in\operatorname{R}^2.
+Two spatial regimes are considered, consistent with Section 2.1:
+	Bounded-domain regime: Dis bounded with finite area \mid D\mid<\infty, representing realistic transformer service regions.
+	Infinite-domain (asymptotic) regime: D=\operatorname{R}^2, used to study scaling behaviour under increasing source density.
+No assumption is made regarding feeder topology or geometric regularity within D; spatial structure is captured statistically rather than deterministically.
+
+2.5.2 Poisson Spatial Deployment
+Under Assumption A4, the locations of active supraharmonic sources are modelled as a homogeneous Poisson point process (PPP)
+\Phi={x_i}\subset D\subset\operatorname{R}^2
+with constant intensity \lambda>0, measured in active chargers per unit area.
+Under this model:
+	the number of sources in D, N=#(\Phi\cap D), is Poisson distributed with mean \lambda\mid D\mid;
+	conditional on N, the locations \left\{x_i}_{i=1}^N\right.are i.i.d. and uniformly distributed over D;
+	the process is stationary and isotropic.
+The intensity \lambdarepresents the density of active chargers at frequency fand may be interpreted as the installed charger density multiplied by an independent activity probability (independent thinning).
+2.5.3 Distance Mapping and Isotropy
+For each source located at x_i\in\Phi, define the Euclidean distance to the PCC as
+\begin{matrix}&d_i:=\parallel x_i\parallel.&&\mathrm{(2.5-1)}\\\end{matrix}
+Due to stationarity and isotropy of the PPP, all spatial expectations involving the propagation kernel depend on distance only. Consequently, integrals over the plane reduce to radial form:
+\begin{matrix}&\int_{\operatorname{R}^2}{f(\parallel x\parallel)\mathrm{\thinsp}dx=2\pi}\int_{0}^{\infty}{f(r)\mathrm{\thinsp}r\mathrm{\thinsp}dr,}&&\mathrm{(2.5-2)}\\\end{matrix}
+with analogous expressions for bounded domains. This reduction is exploited in the derivation of aggregate statistics in Sections 2.8–2.9.
+
+2.5.4 Spatial Deployment Robustness (Non-PPP Stress Tests)
+The homogeneous Poisson point process adopted in Assumption A4 provides an analytically tractable baseline representation of spatial deployment. However, real EV-charger installations may exhibit spatial inhomogeneity or clustering arising from land-use patterns, public charging hubs, or multi-dwelling concentrations. Such structure can increase local source density and therefore affect upper-tail aggregation behaviour.
+To assess sensitivity to the homogeneous PPP assumption, two alternative spatial deployment models are introduced for robustness analysis. These models are used only in numerical evaluation and do not alter the analytical derivations developed under the baseline PPP framework.
+Inhomogeneous Poisson deployment
+Spatial intensity is allowed to vary deterministically across the service region:
+\lambda(x):D\rightarrow\operatorname{R}_+.\bigm
+Source locations are then generated from an inhomogeneous Poisson point process with intensity measure
+\Lambda(A)=\int_{A}{\lambda(x)\mathrm{\thinsp}dx.}\bigm
+The mean spatial density is matched to the baseline PPP:
+\frac{1}{\mid D\mid}\int_{D}{\lambda(x)\mathrm{\thinsp}dx=\lambda.}\bigm\bigmClustered deployment
+Spatial clustering is represented using a Poisson cluster process.
+Parent points form a homogeneous PPP with intensity \lambda_p.
+Each parent generates a random number of offspring points with mean n, displaced around the parent according to an isotropic distribution.
+The resulting mean spatial density is
+\lambda=\lambda_pn,
+
+which is matched to the baseline PPP for comparison.
+2.6 Marked Poisson Point Process Formulation
+This section combines the spatial deployment model and the electrical source model into a single probabilistic object. No new assumptions are introduced.
+2.6.1 Vector-Valued Electrical Marks
+Let \Phi={x_i}\subset Ddenote the homogeneous PPP defined in Section 2.5.
+Each spatial point x_i\in\Phiis associated with a vector-valued electrical mark
+\begin{matrix}&m_i(f):=(I_{sh,i}(f),\mathrm{\;\hairsp} \phi_i(f)),&&\mathrm{(2.6-1)}\\\end{matrix}\bigmwhere:
+	I_{sh,i}(f)is the supraharmonic current magnitude,
+	\phi_i(f)is the emission phase angle.
+The internal admittance Y(f)is deterministic under Assumption A7 and is therefore treated as a fixed system parameter rather than a random mark.
+The marked point process is written as
+\begin{matrix}&\widetilde{\Phi}={(x_i,m_i(f))}_{i\geq1},&&\mathrm{(2.6-2)}\\\end{matrix}
+which constitutes a marked Poisson point process on D\times\mathcal{M}, where \mathcal{M}denotes the mark space.
+2.6.2 Independence Structure
+The stochastic structure of \widetilde{\Phi}follows directly from Assumptions A4–A6:
+	spatial locations \left\{x_i\right\}form a homogeneous PPP (A4);
+	marks \left\{m_i(f)\right\}are i.i.d. across sources and independent of \Phi(A5);
+	phase angles \left\{\phi_i(f)\right\}are independent and satisfy \mathbb{E}[e^{j\phi_i(f)}]=0(A6).
+These properties enable factorisation of expectations and underlie the PGFL- and Campbell-based derivations in Sections 2.8–2.9.
+
+2.6.3 Explicit Mark Distributions Used in Examples
+While the analytical framework is distribution-agnostic subject to integrability conditions, specific distributions are adopted in numerical examples.
+Unless stated otherwise:
+	Emission magnitude
+\begin{matrix}&I_{sh,i}(f)\sim\mathrm{Lognormal} (\mu_I(f),\sigma_I^2(f)),&&\mathrm{(2.6-3)}\\\end{matrix}
+	Phase angle
+\begin{matrix}&\phi_i(f)\sim\mathrm{Uniform} (0,2\pi).&&\mathrm{(2.6-4)}\\\end{matrix}
+Alternative distributions or partial phase correlation are explored only through sensitivity analysis and do not alter the analytical structure.
+2.7 Aggregate Supraharmonic Voltage as a Marked Shot-Noise Functional
+This section formalizes the aggregate transformer-level supraharmonic voltage as a stochastic functional driven by a marked spatial point process. The resulting expression constitutes the central mathematical object of the paper and provides the foundation for all subsequent analytical developments.
+2.7.1 Definition of the Aggregate Voltage Functional
+Let \Phi\subset\operatorname{R}^2denote the spatial point process representing the locations of active EV chargers relative to the point of common coupling (PCC), which is placed at the origin.
+Each point x_i\in\Phiis equipped with a vector-valued mark
+m_i(f):=(I_i(f),\mathrm{\thinsp}\phi_i,\mathrm{\thinsp} Y_i(f)),\bigm
+representing, respectively, the supraharmonic current magnitude, phase angle, and internal admittance of charger iat frequency f.
+Under the linear time-invariant network assumption (A1) and frequency-domain superposition (A2), the complex supraharmonic voltage contribution at the PCC due to charger iis given by
+\begin{matrix}&V_i(f)=\frac{Z_{tr}(f,\parallel x_i\parallel)\mathrm{\thinsp} I_i(f)\mathrm{\thinsp} e^{j\phi_i}}{1+Y_i(f)\mathrm{\thinsp} Z_{tr}(f,\parallel x_i\parallel)},&&\mathrm{(2.7-1)}\\\end{matrix}\bigm
+where Z_{tr}(f,d)denotes the deterministic transfer impedance between a source at distance dand the PCC.
+The aggregate transformer-level supraharmonic voltage is therefore defined as
+\begin{matrix}&V(f)=\sum_{x_i\in\Phi}\frac{Z_{tr}(f,\parallel x_i\parallel)\mathrm{\thinsp} I_i(f)\mathrm{\thinsp} e^{j\phi_i}}{1+Y_i(f)\mathrm{\thinsp} Z_{tr}(f,\parallel x_i\parallel)}.&&\mathrm{(2.7-2)}\\\end{matrix}\bigm
+Equation (2.7-2) defines the aggregate supraharmonic voltage functional.
+
+2.7.2 Shot-Noise Representation and Sources of Randomness
+Define the kernel
+\begin{matrix}&g(f,x,m):=\frac{Z_{tr}(f,\parallel x\parallel)\mathrm{\thinsp} I(f)\mathrm{\thinsp} e^{j\phi}}{1+Y(f)\mathrm{\thinsp}Z_{tr}(f,\parallel x\parallel)}.&&\mathrm{(2.7-3)}\\\end{matrix}\bigm
+Then the aggregate voltage can be written compactly as
+\begin{matrix}&V(f)=\sum_{(x_i,m_i)\in\widetilde{\Phi}}{g(f,}x_i,m_i),&&\mathrm{(2.7-4)}\\\end{matrix}\bigm
+where \widetilde{\Phi}denotes a marked Poisson point process on \operatorname{R}^2\times\mathcal{M}.
+This representation identifies V(f)as a complex-valued shot-noise functional. Randomness arises from three distinct and explicitly separated sources:
+	Spatial randomness: charger locations x_igoverned by \Phi\simPPP(\lambda);
+	Mark randomness: emission magnitudes I_i(f), phases \phi_i, and internal admittances Y_i(f);
+	Propagation filtering: deterministic, frequency- and distance-dependent transfer impedance Z_{tr}(f,\parallel x_i\parallel).
+While the structure is mathematically analogous to shot-noise formulations used in stochastic-geometry models of interference fields, the present formulation differs in three essential respects:
+	the kernel is complex-valued;
+	the response includes a frequency-dependent absorption term;
+	the marks are vector-valued electrical quantities rather than scalar fading coefficients.
+These distinctions place the model outside the class of singular power-law shot-noise fields that give rise to stable or extremal limits under network densification.
+
+2.7.3 Well-Posedness and Existence Conditions
+To ensure that the aggregate voltage V(f)is well defined in the probabilistic sense, the integrability conditions required for existence of its moments are stated explicitly.
+	Existence of the Mean
+By Campbell’s theorem, the first moment satisfies
+⬚E[V(f)]=λDEm[g(f,x,m)] dx,⬚(2.7-5)
+
+provided that
+⬚DEm[∣g(f,x,m)∣] dx<∞.⬚(C1)
+Condition (C1) is satisfied for bounded service regions or for transfer impedances exhibiting sufficient attenuation with distance.
+	Existence of the Variance
+For a Poisson point process, the variance of the shot-noise functional is
+⬚Var⁡[V(f)]=λDEm[∣g(f,x,m)∣2] dx,⬚(2.7-6)
+which exists if and only if
+⬚DEm[∣g(f,x,m)∣2] dx<∞.⬚(C2)
+The absorption factor 1YZtr)-1improves convergence relative to classical power-law shot-noise models and plays a central role in bounding higher-order moments. Formal proofs of (C1)–(C2) are deferred to Appendix B.
+2.7.4 Consequence of Phase Diversity
+Under Assumption A6, the phase marks \left\{\phi_i(f)\right\}are independent and uniformly distributed on [0,2\pi), implying
+\mathbb{E}[e^{j\phi_i(f)}]=0.
+
+Substituting into (2.7-5) yields
+⬚E[V(f)]=0.⬚(2.7-7)
+Thus, despite non-zero individual emissions, the aggregate supraharmonic voltage exhibits zero mean due to phase cancellation. This property underpins the sublinear scaling behaviour established in Section 2.9 and reflects a fundamental distinction between supraharmonic aggregation and coherent harmonic summation.
+
+2.7.5 Scope and Interpretation
+Equation (2.7-2) defines a statistical model, not a deterministic predictor. It characterizes distributional behaviour under spatial and emission uncertainty rather than feeder-resolved or compliance-grade quantities.
+The formulation is therefore appropriate for:
+	probabilistic screening studies,
+	comparative scenario analysis,
+	theoretical characterization of aggregation mechanisms,
+and is not intended for detailed feeder design or regulatory assessment.
+2.8 Laplace Functional Analysis and Moment Derivations
+This section derives first- and second-order statistics of the aggregate supraharmonic voltage defined in Section 2.7. The analysis relies on standard results for marked Poisson point processes, including the Laplace functional and Campbell’s theorem, adapted to the complex-valued, frequency-dependent shot-noise functional with absorption. Assumptions (A1)–(A5) apply throughout.
+
+2.8.1 Laplace Functional of the Marked Process
+Let \widetilde{\Phi}denote a marked Poisson point process on \operatorname{R}^2\times\mathcal{M}with constant spatial intensity \lambdaover D\subset\operatorname{R}^2and i.i.d. marks m\sim F_m, independent of location. For any non-negative measurable test function h:D\times\mathcal{M}\rightarrow\operatorname{R}_+, the Laplace functional is
+⬚LΦ(h)≜E exp -(xi,mi)∈Φh(xi,mi)=exp⁡-λDEm[1-e-h(x,m)] dx.⬚(2.8-1)
+
+Equation (2.8-1) is used to derive the moments below.
+
+2.8.2 Shot-Noise Representation
+Recalling Section 2.7, the complex contribution of a charger at xmis
+\begin{matrix}&g(f,x,m)=\frac{Z_{tr}(f,\parallel x\parallel)\mathrm{\thinsp} I(f)\mathrm{\thinsp} e^{j\phi}}{1+Y(f)\mathrm{\thinsp}Z_{tr}(f,\parallel x\parallel)}.&&\mathrm{(2.8-2)}\\\end{matrix}\bigm
+The aggregate supraharmonic voltage is therefore the complex shot-noise functional
+\begin{matrix}&V(f)=\sum_{(x_i,m_i)\in\widetilde{\Phi}}{g(f,}x_i,m_i).&&\mathrm{(2.8-3)}\\\end{matrix}\bigm
+
+2.8.3 First Moment
+Assuming \int_{D}\mathbb{E}_m[\mid g(f,x,m)\mid] dx<∞, Campbell’s theorem yields
+⬚E[V(f)]=λDEm[g(f,x,m)] dx.⬚(2.8-4)
+
+Under Assumption A6, phase independence implies \mathbb{E}_m[g(f,x,m)]=0for all x, and hence
+⬚E[V(f)]=0.⬚(2.8-5)
+2.8.4 Second Moment and Variance
+Assuming \int_{D}\mathbb{E}_m[\mid g(f,x,m)\mid^2] dx<∞, the second moment satisfies
+⬚E[∣V(f)∣2]=λDEm[∣g(f,x,m)∣2] dx+λ2∣DEm[g(f,x,m)] dx∣2.⬚(2.8-6)
+
+Using (2.8-5), the second term vanishes, yielding
+⬚E[∣V(f)∣2]=Var⁡[V(f)]=λDEm[∣g(f,x,m)∣2] dx.⬚(2.8-7)
+
+Substituting (2.8-2) gives
+⬚Var⁡[V(f)]=λDE∣Ztr(f,∥x∥)∣2 ∣I(f)∣2∣1+Y(f) Ztr(f,∥x∥)∣2dx.⬚(2.8-8)
+
+
+2.8.5 Boundedness Condition and Interpretation
+The variance is finite provided
+\begin{matrix}&\int_{D}\mathbb{E}\mathrm{\thinsp}\left[\frac{\mid Z_{tr}(f,\parallel x\parallel)\mid^2\mathrm{\thinsp} \mid I(f)\mid^2}{\mid1+Y(f)\mathrm{\thinsp}Z_{tr}(f,\parallel x\parallel)\mid^2}\right]dx<\infty.&&\mathrm{(2.8-9)}\\\end{matrix}\bigm
+Propagation attenuation through Z_{tr}suppresses distant contributions, while the absorption factor 1YZtr)-1limits near-field amplification. A sufficient set of conditions ensuring (2.8-9) is established in Appendix B.
+2.8.6 Scaling with Charger Density
+On a fixed bounded domain D, (2.8-7)–(2.8-8) imply
+⬚E[∣V(f)∣2]=λ C(f),C(f)≜DEm[∣g(f,x,m)∣2] dx<∞.⬚(2.8-10)
+
+Hence the RMS aggregate voltage scales as
+⬚E[∣V(f)∣2]=O(λ1/2),λ→∞.⬚(2.8-11)
+
+This square-root scaling reflects incoherent aggregation under phase diversity and bounded propagation, in contrast to the stable or extremal scaling regimes associated with singular shot-noise kernels.
+2.9 Theoretical Results and Scaling Properties
+2.9.1 Proposition 1 (Zero Mean Under Phase Diversity)
+Proposition 1. Under (A1)–(A4), if \phi_iare i.i.d. \left.Unif[0,2\pi\right)and independent of the remaining marks, then
+⬚E[V(f)]=0.⬚(2.9-1)
+
+Proof (sketch). Apply Campbell’s theorem (2.8-4) and use \mathbb{E}[e^{j\phi}]=0.
+
+2.9.2 Theorem 1 (Sublinear RMS Scaling on a Bounded Domain)
+Theorem 1. Assume (A1)–(A5) and that (2.8-9) holds on a bounded D. Then
+\begin{matrix}&\sqrt{\mathbb{E}\mid V(f)\mid^2}=O(\lambda^{1/2}),\lambda\rightarrow\infty.&&\mathrm{(2.9-2)}\\\end{matrix}\bigm
+Proof (sketch). From (2.8-10), \mathbb{E}\mid V\mid^2=\lambda C(f)with C(f)<\infty. Taking the square root gives the result.
+2.9.3 Theorem 2 (Finite Variance Under Denominator Separation and Kernel Integrability)
+Theorem 2. Suppose:
+	\mathbb{E}\mid I(f)\mid^2<\infty;
+	\int_{D}\mid Z_{tr}(f,\parallel x\parallel)\mid^2dx<\infty;
+	there exists c_0>0such that \mid1+Y(f)\mathrm{\thinsp} Z_{tr}(f,\parallel x\parallel)\mid\geq c_0for all x\in Dalmost surely (denominator separation). Then Var(V(f))<\infty.
+Proof (sketch). Use (2.8-8) and bound \mid1+YZ_{tr}\mid^{-2}\le c_0^{-2}to reduce to \int_{D}\mid Z_{tr}\mid^2dx<\infty.
+2.9.4 Corollary 1 (Coherent Phase Alignment Restores Linear Mean Scaling)
+Corollary 1. If \phi_i=\phi_0almost surely for all i, and \int_{D}\mid\mathbb{E}_m[g(f,x,m)]∣dx<∞, then
+⬚E[V(f)]=λDEm[g(f,x,m)] dx=O(λ).⬚(2.9-3)
+
+This represents the coherent (no-cancellation) limit.
+2.9.5 Corollary 2 (No-Absorption Limit)
+If Y(f)\equiv0, then g(f,x,m)=Z_{tr}(f,\parallel x\parallel)\mathrm{\thinsp} I(f)e^{j\phi}and the boundedness condition reduces to kernel integrability alone.
+2.10 Numerical Scheme and Synthetic Validation Framework
+This section describes the numerical procedures used to evaluate analytically intractable functionals of the aggregate supraharmonic voltage and to validate the theoretical results derived in Sections 2.8–2.9. All numerical schemes are constructed to be fully consistent with the stochastic model assumptions and are intended for synthetic validation rather than empirical calibration.
+2.10.1 Monte Carlo Estimator Consistent with the Analytical Model
+Let D\subset\operatorname{R}^2denote a bounded service region containing the PCC at the origin. For a given spatial intensity \lambda, a realization of the charger deployment is generated as follows:
+	Draw N\simPoisson(\lambda\mid D\mid);
+	Sample locations \left\{x_i}_{i=1}^N\right.independently and uniformly over D;
+	Independently sample marks \left\{m_i}_{i=1}^N\right.from the prescribed mark distributions.
+For each realization, the aggregate voltage is evaluated using the exact aggregation equation
+\begin{matrix}&V^{\left(k\right)}(f)=\sum_{i=1}^{N^{\left(k\right)}}{g(f,}x_i^{\left(k\right)},m_i^{\left(k\right)}),&&\mathrm{(2.10-1)}\\\end{matrix}
+where kindexes the Monte Carlo realization.
+The Monte Carlo estimator of any functional \Psi(V)is then given by
+⬚E[Ψ(V)]=1Kk=1KΨ Vk(f),⬚(2.10-2)
+with Kdenoting the number of realizations.
+This estimator is unbiased and converges almost surely to the true expectation as K\rightarrow\infty.
+2.10.2 Numerical Evaluation of Analytical Mean and Variance
+Where closed-form expressions are unavailable, the analytical mean and variance derived in Section 2.8 are evaluated numerically using deterministic quadrature.
+For isotropic deployments, the spatial integrals reduce to one-dimensional radial integrals of the form
+⬚DEm[⋅] dx=2π0REm[⋅] r dr,⬚(2.10-3)
+where Rdenotes the radius of the service region.
+Numerical integration is performed using adaptive quadrature with absolute and relative tolerances chosen to ensure numerical errors are negligible relative to Monte Carlo variability.
+2.10.3 Convergence Diagnostics and Error Quantification
+Monte Carlo convergence is assessed using:
+	stabilization of sample means and variances,
+	confidence intervals computed via batch means,
+	verification of the expected K^{-1/2}decay of estimator variance.
+For tail-related quantities (e.g., high percentiles of \mid V(f)\mid), convergence is monitored by progressively increasing Kand verifying percentile stability within prescribed tolerances.
+All reported numerical results are accompanied by confidence intervals unless the quantity is evaluated deterministically.
+2.10.4 Synthetic Validation Test Cases
+To validate the analytical framework independently of empirical data, several synthetic test cases with known or limiting behavior are employed.
+Test Case 1: Single-Distance Benchmark
+All chargers are placed at a fixed distance d_0from the PCC, with random phases. Analytical expressions reduce to finite sums and are compared against Monte Carlo estimates to verify implementation correctness.
+Test Case 2: Coherent Phase Limit
+Phase variance is progressively reduced until \phi_i\equiv\phi_0. In this limit, numerical results are verified to converge toward linear scaling, consistent with Corollary 1.
+Test Case 3: Independence Sensitivity
+Controlled phase correlation is introduced synthetically. Deviation from the analytical predictions is quantified as a function of the imposed correlation, illustrating the sensitivity of results to Assumption (A4).
+Test Case 4: Analytical–Monte Carlo Consistency
+Monte Carlo estimates of the mean and variance are compared against the numerically evaluated analytical expressions in Section 2.8. Agreement within prescribed tolerances confirms both theoretical correctness and numerical implementation fidelity.
+Test Case 5: Domain Size and Boundary Effects
+The service region Dis expanded while keeping \lambdafixed. Numerical results are verified to converge toward the infinite-domain behavior predicted by the theory, confirming robustness to boundary truncation.
+2.10.5 Computational Efficiency Considerations
+Analytical evaluation of the mean and variance requires only deterministic numerical integration and scales independently of \lambda. In contrast, Monte Carlo simulation cost scales linearly with both \lambdaand the number of realizations K.
+Accordingly, a hybrid strategy—analytical evaluation of first-order statistics combined with Monte Carlo estimation of higher-order or tail quantities—offers substantial computational efficiency gains and is adopted where appropriate.
+
+2.10.6 Reproducibility and Implementation Notes
+All numerical experiments are reproducible given:
+	complete specification of model parameters,
+	fixed random number generator seeds,
+	documented numerical tolerances.
+A machine-readable parameter set and pseudocode outlining the numerical procedures are provided in Appendix D.
+
+2.11 Feeder-Level Benchmark Validation
+To complement analytical evaluation, a reproducible feeder-level benchmark is introduced to assess the predictive consistency of the aggregation model under explicitly defined physical network conditions. This benchmark provides a direct comparison between stochastic-geometry predictions and aggregate supraharmonic response obtained from feeder-resolved network simulation.
+
+2.11.1 Benchmark network specification
+A reference low-voltage distribution network is defined by:
+	feeder topology and conductor parameters,
+	transformer impedance at the point of common coupling (PCC),
+	spatial connection locations available for charger integration,
+	frequency-domain network representation used to compute transfer impedance.
+Using this model, the propagation kernel
+Z_{tr}(f,x)\bigm
+is computed numerically for all candidate connection points through linear network analysis consistent with the assumptions of Section 2.
+
+2.11.2 Emission and device parameter specification
+Charger electrical characteristics are defined independently of the aggregation model and include:
+	emission magnitude distribution,
+	phase statistics,
+	internal admittance distribution.
+These parameters are specified a priori from device characterisation data or fixed benchmark values and are not tuned to match aggregate outcomes.
+
+2.11.3 Forward aggregation simulation
+For the benchmark feeder, aggregate supraharmonic voltage at the PCC is obtained through direct superposition of individual source contributions:
+	Charger locations are generated according to the spatial deployment model.
+	Transfer impedance values are obtained from feeder simulation.
+	Individual source contributions are propagated through the network and summed to produce aggregate response.
+Monte Carlo sampling over spatial deployment and emission variability yields empirical distributions of:
+	RMS aggregate voltage,
+	magnitude distribution,
+	selected high-percentile levels.
+
+2.11.4 Analytical model comparison
+Using identical emission statistics and propagation kernel, analytical predictions are computed from the stochastic-geometry aggregation model. Comparison between analytical and feeder-simulated results is performed for:
+	first and second moments,
+	distributional characteristics,
+	high-percentile behaviour.
+Agreement is quantified using relative error metrics and Monte Carlo confidence intervals.
+
+RESULTS AND DISCUSSION
+
+	DISCUSSION 
+
+
+CONCLUSION
+
+
+
+
+
+
+REFERENCES
+
+
+
+
+
+
+APPENDIX A
+Laplace-Functional-Based Derivation of Aggregate Supraharmonic Statistics**
+This appendix provides the complete derivations underlying the analytical results presented in Sections 2.7–2.9. All results follow from standard properties of marked Poisson point processes, specialised here to the complex-valued shot-noise functional defining the aggregate supraharmonic voltage.
+
+A.1 Preliminaries and Notation
+Let
+\widetilde{\Phi}={(x_i,m_i)}\subset\operatorname{R}^2\times\mathcal{M}\bigm
+denote a marked Poisson point process, where:
+	the ground process \Phi={x_i}is a homogeneous PPP on \operatorname{R}^2with intensity \lambda,
+	the marks m_i=(I_{sh,i},\phi_i)are i.i.d. with distribution F_m, independent of \Phi.
+Let D\subset\operatorname{R}^2be a bounded observation region. The aggregate supraharmonic voltage at frequency fis
+\begin{matrix}&V(f)=\sum_{(x_i,m_i)\in\widetilde{\Phi}}{g(f,}x_i,m_i),&&\mathrm{(A.1)}\\\end{matrix}\bigm
+with kernel
+\begin{matrix}&g(f,x,m)=\frac{Z_{tr}(f,\parallel x\parallel)\mathrm{\thinsp} I_{sh}\mathrm{\thinsp} e^{j\phi}}{1+Y(f)\mathrm{\thinsp}Z_{tr}(f,\parallel x\parallel)}.&&\mathrm{(A.2)}\\\end{matrix}\bigm
+
+A.2 Laplace Functional of a Marked Poisson Point Process
+Let h:\operatorname{R}^2\times\mathcal{M}\rightarrow\operatorname{R}_+be measurable. The Laplace functional of \widetilde{\Phi}is
+⬚LΦ(h)=E exp -(xi,mi)∈Φh(xi,mi).⬚(A.3)
+
+For a marked PPP,
+⬚LΦ(h)=exp⁡ ⬚λR2Em 1e-h(x,m) dx,⬚(A.4)
+
+provided the integral exists. Equation (A.4) follows directly from the probability-generating functional of a Poisson point process.
+
+A.3 First Moment (Mean Aggregate Voltage)
+A.3.1 Campbell’s Theorem
+For any integrable u:\operatorname{R}^2\times\mathcal{M}\rightarrow\mathbb{C},
+⬚E (xi,mi)∈Φu(xi,mi)=λR2Em[u(x,m)] dx,⬚(A.5)
+
+provided
+⬚R2Em[∣u(x,m)∣] dx<∞.⬚(A.6)
+
+A.3.2 Application to \mathbit{V}(\mathbit{f})
+Setting u(x,m)=g(f,x,m),
+⬚E[V(f)]=λDEm[g(f,x,m)] dx.⬚(A.7)
+
+If \left.\phi\simUnif[0,2\pi\right), then
+⬚E[ejϕ]=0,⬚(A.8)
+
+and therefore
+⬚E[V(f)]=0.⬚(A.9)
+
+
+A.4 Second Moment and Variance
+The squared magnitude expands as
+\begin{matrix}&\mid V(f)\mid^2=\sum_{i}\mid g_i\mid^2+\sum_{i\neq j} g_ig_j^\ast,&&\mathrm{(A.10)}\\\end{matrix}\bigm
+where g_i=g(f,x_i,m_i).
+Taking expectations yields the general identity
+⬚E∣V(f)∣2=λDEm[∣g∣2] dx+λ2∣DEm[g] dx∣2.⬚(A.11)
+
+Since \mathbb{E}[V(f)]=λDEm[g] dx,
+⬚Var[V(f)]=λDEm[∣g(f,x,m)∣2] dx,⬚(A.12)
+
+provided
+⬚DEm[∣g(f,x,m)∣2] dx<∞.⬚(A.13)
+
+Substituting (A.2),
+⬚Var[V(f)]=λDE∣Ztr(f,∥x∥)∣2 ∣Ish∣2∣1+Y(f) Ztr(f,∥x∥)∣2dx.⬚(A.14)
+
+
+A.5 Scaling with Spatial Intensity
+Since the integral in (A.12) is finite and independent of \lambda,
+⬚Var[V(f)]∝λ,⬚(A.15)
+
+and therefore
+\begin{matrix}&\sqrt{\mathbb{E}\mid V(f)\mid^2}=O(\lambda^{1/2}).&&\mathrm{(A.16)}\\\end{matrix}\bigm
+
+A.6 Remarks on Generality
+The derivations above do not assume specific functional forms for:
+	the emission magnitude distribution,
+	the admittance Y(f),
+	the propagation kernel Z_{tr}(f,d),
+beyond measurability, bounded-response, and integrability conditions. The results therefore apply to a broad class of physically meaningful supraharmonic source and network models.
+**Appendix B
+Proofs of Boundedness and Integrability Conditions**
+This appendix establishes sufficient conditions under which the aggregate supraharmonic voltage defined in Section 2.7 possesses finite first and second moments. These conditions justify the use of Campbell’s theorem and the variance expressions derived in Sections 2.8–2.9.
+
+B.1 Integrability Conditions Recalled
+Recall the kernel
+\begin{matrix}&g(f,x,m)=\frac{Z_{tr}(f,\parallel x\parallel)\mathrm{\thinsp} I(f)\mathrm{\thinsp} e^{j\phi}}{1+Y(f)\mathrm{\thinsp}Z_{tr}(f,\parallel x\parallel)}.&&\mathrm{(B.1)}\\\end{matrix}\bigm
+The existence of the mean and variance requires, respectively,
+\begin{matrix}&\int_{D}\mathbb{E}_m\left[\mid g(f,x,m)\mid\right]\mathrm{\thinsp} dx<\infty,&&\mathrm{(C1)}\\\end{matrix}\bigm\begin{matrix}&\int_{D}\mathbb{E}_m\left[\mid g(f,x,m)\mid^2\right]\mathrm{\thinsp} dx<\infty.&&\mathrm{(C2)}\\\end{matrix}
+Since \mid e^{j\phi}\mid=1, these conditions reduce to integrability of
+\begin{matrix}&\frac{\mid Z_{tr}(f,\parallel x\parallel)\mid^p\mathrm{\thinsp} \mid I(f)\mid^p}{\mid1+Y(f)\mathrm{\thinsp}Z_{tr}(f,\parallel x\parallel)\mid^p},p=1,2.&&\mathrm{(B.2)}\\\end{matrix}\bigm
+B.2 Bounded Service Region
+Proposition B.1 (Finite Domain Sufficiency)
+Let D\subset\operatorname{R}^2be bounded with finite area \mid D\mid<\infty.
+Assume
+⬚E[∣I(f)∣2]<∞,sup⁡x∈D∣Ztr(f,∥x∥)∣<∞.⬚(B.3)
+Then conditions (C1) and (C2) hold.
+Proof.
+Over a bounded domain,
+\mid g(f,x,m)\mid\le\frac{{\sup\funcapply}\below{x\in D}\mid Z_{tr}(f,\parallel x\parallel)\mid\mathrm{\thinsp} \mid I(f)\mid}{\mid1+Y(f)Z_{tr}(f,\parallel x\parallel)\mid}.\bigm
+Since the denominator is strictly positive and bounded away from zero for finite Z_{tr}, the integrand is bounded by an integrable random variable. Multiplication by finite area \mid D\midyields convergence. 
+Interpretation.
+For screening studies over finite feeders or substations, moment existence is guaranteed under minimal assumptions.
+
+B.3 Infinite-Domain Analysis
+When D=\operatorname{R}^2, integrability depends on the asymptotic decay of the transfer impedance.
+Proposition B.2 (Second-Moment Sufficiency on \operatorname{R}^\mathbf{2})
+Assume:
+	\mathbb{E}[\mid I(f)\mid^2]<∞;
+	Y(f)\geq0;
+	There exists C>0and \alpha>1such that
+\begin{matrix}&\mid Z_{tr}(f,d)\mid\le C d^{-\alpha},d\rightarrow\infty.&&\mathrm{(B.4)}\\\end{matrix}\bigm
+Then condition (C2) holds.
+Proof.
+For sufficiently large d,
+\mid g(f,x,m)\mid^2\le\frac{C^2\mid I(f)\mid^2d^{-2\alpha}}{\mid1+Y(f)Z_{tr}(f,d)\mid^2}\le C^\prime\mid I(f)\mid^2d^{-2\alpha}.\bigm
+In polar coordinates,
+\int_{\operatorname{R}^2} d^{-2\alpha}\mathrm{\thinsp}dx=2\pi\int_{0}^{\infty}r^{1-2\alpha}\mathrm{\thinsp}dr,\bigm
+which converges if and only if \alpha>1. 
+
+Corollary B.1 (Exponential Attenuation)
+If
+\begin{matrix}&\mid Z_{tr}(f,d)\mid\le C e^{-\beta d},\beta>0,&&\mathrm{(B.5)}\\\end{matrix}\bigm
+then (C2) holds automatically.
+Interpretation.
+Distributed-parameter cable models with resistive losses satisfy this condition.
+
+B.4 Role of Internal Admittance
+Proposition B.3 (Absorption Improves Convergence)
+Let Z_{tr}(f,d)be measurable and square-integrable on \operatorname{R}^2.
+If Y(f)>0, then
+\begin{matrix}&\mid g(f,x,m)\mid\le\mid Z_{tr}(f,\parallel x\parallel)\mid\mathrm{\thinsp} \mid I(f)\mid,&&\mathrm{(B.6)}\\\end{matrix}\bigm
+and
+\begin{matrix}&\mid g(f,x,m)\mid^2\le\mid Z_{tr}(f,\parallel x\parallel)\mid^2\mathrm{\thinsp} \mid I(f)\mid^2.&&\mathrm{(B.7)}\\\end{matrix}\bigm
+Proof.
+Since Y(f)\geq0,
+\mid1+Y(f)Z_{tr}(f,d)\mid\geq1.\bigm
+The inequalities follow directly. 
+Interpretation.
+Internal admittance never worsens integrability and often ensures boundedness when Z_{tr}alone would be marginal.
+
+B.5 First-Moment Integrability
+Proposition B.4 (Mean Existence)
+Assume \mathbb{E}[\mid I(f)\mid]<∞and
+\begin{matrix}&\int_{D}\mid Z_{tr}(f,\parallel x\parallel)\mid\mathrm{\thinsp} dx<\infty.&&\mathrm{(B.8)}\\\end{matrix}
+Then condition (C1) holds.
+Proof.
+Immediate from Hölder’s inequality and Proposition B.3. 
+
+B.6 Necessity Remarks
+The conditions given above are sufficient, not necessary.
+If Z_{tr}(f,d)\sim d^{-1}as d\rightarrow\infty, the second moment diverges logarithmically on \operatorname{R}^2, reproducing classical divergence results for unattenuated shot-noise fields.
+This highlights the physical necessity of attenuation or finite spatial extent in realistic power networks.
+
+B.7 Connection to Physical Network Models
+The conditions proven above are satisfied by:
+	finite feeder networks;
+	underground and overhead cables with resistive losses;
+	transformer-coupled systems exhibiting frequency-dependent attenuation.
+They are violated only by idealized lossless or infinite free-space propagation models, which are not representative of power distribution networks.
+
+**Appendix C
+Numerical Quadrature Error Bounds and Monte Carlo Convergence**
+This appendix provides formal justification for the numerical procedures used in Section 2.10. Specifically, it establishes (i) error bounds for deterministic numerical quadrature used to evaluate analytical expressions, and (ii) convergence and consistency properties of the Monte Carlo estimators employed for synthetic validation.
+
+C.1 Numerical Evaluation of Spatial Integrals
+C.1.1 Reduction to Radial Integrals
+For isotropic deployments, spatial integrals of the form
+\int_{D}\mathbb{E}_m[h(\parallel x\parallel,m)] dx
+
+reduce to
+⬚2π0REm[h(r,m)] r dr,⬚(C.1)
+
+where R<\inftydenotes the service radius.
+
+C.1.2 Quadrature Error Bound (Finite Domain)
+Let
+F(r):=\mathbb{E}_m[h(r,m)] r,
+
+and assume:
+	Fis continuous on 0R;
+	Fhas bounded second derivative on 0R.
+Let {\hat{I}}_Qdenote the numerical approximation of
+I=\int_{0}^{R}{F(r)\mathrm{\thinsp}dr}\bigm
+using an adaptive composite quadrature scheme.
+Then there exists a constant C_Q>0such that
+⬚∣I-IQ∣≤CQ max⁡r∈[0,R]∣F''(r)∣ Δr2,⬚(C.2)
+
+where \Delta ris the maximum subinterval length.
+Interpretation.
+For sufficiently smooth kernels Z_{tr}(f,r), quadrature error decays quadratically with resolution and can be made arbitrarily small relative to Monte Carlo variability.
+
+C.1.3 Truncation Error (Infinite Domain)
+When D=\operatorname{R}^2, numerical evaluation is performed over 0Rmax, yielding truncation error
+⬚εtrunc=2πRmax∞Em[h(r,m)] r dr.⬚(C.3)
+
+Under the decay condition
+⬚Em[h(r,m)]≤Cr-β,β>2,⬚(C.4)
+
+it follows that
+\begin{matrix}&\varepsilon_{trunc}\le\frac{2\pi C}{\beta-2}R_{\max}^\funcapply.&&\mathrm{(C.5)}\\\end{matrix}\bigm
+Thus truncation error decays polynomially (or exponentially, if applicable) with increasing R_{max}.
+
+C.2 Monte Carlo Estimator Definitions
+Let V^{\left(k\right)}(f)denote the aggregate voltage computed from the k-th realization of the marked Poisson point process. For any measurable functional \Psi, define the Monte Carlo estimator
+\begin{matrix}&{\hat{\mu}}_K=\frac{1}{K}\sum_{k=1}^{K}\Psi\left(V^{\left(k\right)}(f)\right).&&\mathrm{(C.6)}\\\end{matrix}\bigm
+C.3 Unbiasedness and Strong Consistency
+Proposition C.1 (Unbiasedness)
+If \mathbb{E}[\mid\Psi(V(f))\mid]<∞, then
+⬚E[μK]=E[Ψ(V(f))].⬚(C.7)
+
+Proof.
+Immediate from linearity of expectation. 
+Proposition C.2 (Strong Law of Large Numbers)
+If \mathbb{E}[\mid\Psi(V(f))\mid]<∞, then
+⬚μK  a.s.→  E[Ψ(V(f))],K→∞.⬚(C.8)
+
+Proof.
+The sequence \left\{\Psi(V^{\left(k\right)}(f))\right\}is i.i.d. with finite mean. The result follows from the strong law of large numbers. 
+
+C.4 Convergence Rate and Confidence Bounds
+Proposition C.3 (Central Limit Theorem)
+If \operatorname{Var}\funcapply[\Psi(V(f))]<∞, then
+⬚KμK-E[Ψ(V(f))]d→N(0,σΨ2),⬚(C.9)
+
+where \sigma_\Psi^2=\operatorname{Var}\funcapply[\Psi(V(f))].
+Implication.
+Estimator error scales as O(K^{-1/2}), providing a basis for confidence interval construction.
+
+C.5 Convergence of Sample Variance and RMS Estimates
+Let \Psi(V)=\mid V\mid^2. Under condition (C2),
+⬚Var[V]=1Kk=1K∣Vk(f)∣2  a.s.→  Var⁡[V(f)].⬚(C.10)
+
+Consequently,
+⬚RMS(V)=1Kk=1K∣Vk(f)∣21/2  a.s.→  E[∣V(f)∣2].⬚(C.11)
+
+
+C.6 Error Decomposition
+The total numerical error in Monte Carlo–assisted evaluation can be decomposed as
+\begin{matrix}&\varepsilon_{\mathrm{total}}=\varepsilon_{\mathrm{quad}}+\varepsilon_{\mathrm{trunc}}+\varepsilon_{\mathrm{MC}},&&\mathrm{(C.12)}\\\end{matrix}\bigmwhere:
+	\varepsilon_{\mathrm{quad}}is deterministic quadrature error (C.2),
+	\varepsilon_{\mathrm{trunc}}is domain truncation error (C.5),
+	\varepsilon_{\mathrm{MC}}=O(K^{-1/2})is stochastic Monte Carlo error.
+This decomposition enables controlled trade-offs between computational cost and accuracy.
+
+C.7 Practical Convergence Diagnostics
+In practice, convergence is verified by:
+	increasing R_{max}until truncation error is negligible;
+	tightening quadrature tolerances until deterministic error is dominated by Monte Carlo variance;
+	confirming K^{-1/2}scaling of estimator variability.
+These diagnostics ensure numerical results reflect the theoretical quantities derived in the main text.
+
+

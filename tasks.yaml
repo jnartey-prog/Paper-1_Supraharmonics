@@ -1,0 +1,14 @@
+version: 1
+tasks:
+  - id: T1
+    title: Validate analytical statistics baseline
+    owner: A2
+    status: in_progress
+  - id: T2
+    title: Validate Monte Carlo alignment with analytical outputs
+    owner: A4
+    status: todo
+  - id: T3
+    title: Verify artifact and manifest completeness
+    owner: A5
+    status: todo
