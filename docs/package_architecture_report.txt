@@ -1,0 +1,1537 @@
+PROJECT ARCHITECTURE REPORT
+================================================================================
+Repository Root: C:\Users\joshn\Desktop\package 1
+Generated At: 2026-02-19T17:40:23
+Output File: C:\Users\joshn\Desktop\package 1\docs\package_architecture_report.txt
+
+1) PROJECT METADATA
+--------------------------------------------------------------------------------
+- description: Research-grade package for transformer-level supraharmonic aggregation analysis.
+- name: supraharmonic-aggregation
+- requires-python: >=3.10
+- script:supraharmonic-pipeline: supraharmonic_aggregation.cli:main
+- version: 0.1.0
+
+2) ARCHITECTURE TREE
+--------------------------------------------------------------------------------
+package 1/
+├── .github/
+│   └── workflows/
+│       └── ci.yml
+├── docs/
+│   └── index.md
+├── examples/
+│   ├── pipeline_cli.py
+│   └── quickstart.py
+├── scripts/
+│   ├── analyze_synthetic_benchmark.py
+│   ├── export_package_architecture.py
+│   └── plot_synthetic_benchmark.py
+├── specs/
+│   ├── A1.md
+│   ├── A2.md
+│   ├── A3.md
+│   ├── A4.md
+│   └── A5.md
+├── src/
+│   └── supraharmonic_aggregation/
+│       ├── analysis/
+│       │   ├── __init__.py
+│       │   ├── analytical.py
+│       │   ├── scaling.py
+│       │   ├── tail.py
+│       │   └── validation.py
+│       ├── artifacts/
+│       │   ├── __init__.py
+│       │   ├── generator.py
+│       │   └── manifest.py
+│       ├── benchmark/
+│       │   ├── __init__.py
+│       │   └── compare.py
+│       ├── core/
+│       │   ├── __init__.py
+│       │   ├── aggregator.py
+│       │   ├── kernel.py
+│       │   └── marks.py
+│       ├── governance/
+│       │   ├── __init__.py
+│       │   └── manifest.py
+│       ├── simulation/
+│       │   ├── __init__.py
+│       │   └── monte_carlo.py
+│       ├── __init__.py
+│       ├── _version.py
+│       ├── api.py
+│       ├── cli.py
+│       ├── config.py
+│       ├── logging_config.py
+│       ├── models.py
+│       └── py.typed
+├── tests/
+│   ├── acceptance/
+│   │   ├── test_governance_artifacts.py
+│   │   ├── test_objectives.py
+│   │   └── test_release_gate.py
+│   ├── integration/
+│   │   ├── test_analytical_pipeline.py
+│   │   ├── test_artifact_generator.py
+│   │   ├── test_benchmark_compare.py
+│   │   ├── test_examples_smoke.py
+│   │   └── test_monte_carlo_vs_analytical.py
+│   ├── pipeline/
+│   │   └── test_cli_pipeline.py
+│   ├── unit/
+│   │   ├── test_aggregator.py
+│   │   ├── test_analytical.py
+│   │   ├── test_ci_workflow_sanity.py
+│   │   ├── test_config_metadata.py
+│   │   ├── test_integrability.py
+│   │   ├── test_kernel.py
+│   │   ├── test_scaling.py
+│   │   ├── test_structure.py
+│   │   └── test_tail_metrics.py
+│   └── conftest.py
+├── .gitignore
+├── agents.yaml
+├── codex-x86_64-pc-windows-msvc.exe
+├── Concept.txt
+├── DECISIONS.md
+├── Literature.txt
+├── Outline.txt
+├── proposal.normalized.json
+├── pyproject.toml
+├── README.md
+├── synthetic_supraharmonic_shotnoise.csv
+├── tasks.seed.yaml
+├── tasks.yaml
+└── uv.lock
+
+3) FILE INVENTORY
+--------------------------------------------------------------------------------
+- Total scanned Python files: 49
+- Package modules: 25
+- Test modules: 19
+- Script modules: 3
+- Example modules: 2
+- File type counts:
+  - (no-ext): 1
+  - .csv: 1
+  - .exe: 1
+  - .json: 1
+  - .lock: 1
+  - .md: 8
+  - .py: 49
+  - .toml: 1
+  - .txt: 3
+  - .typed: 1
+  - .yaml: 3
+  - .yml: 1
+
+4) PACKAGE MODULE BREAKDOWN
+--------------------------------------------------------------------------------
+[supraharmonic_aggregation]
+  file: src\supraharmonic_aggregation\__init__.py
+  role: package infrastructure
+  doc: Public package interface for supraharmonic aggregation workflows.
+  __all__: AnalysisConfig, BenchmarkComparison, IntegrabilityReport, MonteCarloResult, RunBundle, TailMetrics, __version__, analyze, default_config, generate_artifacts, run_pipeline
+  internal deps: supraharmonic_aggregation._version, supraharmonic_aggregation.api, supraharmonic_aggregation.config, supraharmonic_aggregation.models
+
+[supraharmonic_aggregation._version]
+  file: src\supraharmonic_aggregation\_version.py
+  role: package infrastructure
+  doc: Package version metadata.
+  internal deps: (none)
+
+[supraharmonic_aggregation.analysis]
+  file: src\supraharmonic_aggregation\analysis\__init__.py
+  role: analysis
+  doc: Analytical and validation routines.
+  __all__: check_integrability_conditions, compute_analytical_statistics, compute_tail_metrics, evaluate_scaling_laws
+  internal deps: supraharmonic_aggregation.analytical, supraharmonic_aggregation.scaling, supraharmonic_aggregation.tail, supraharmonic_aggregation.validation
+
+[supraharmonic_aggregation.analysis.analytical]
+  file: src\supraharmonic_aggregation\analysis\analytical.py
+  role: analysis
+  doc: Closed/semi-closed analytical statistics approximations.
+  internal deps: supraharmonic_aggregation.config, supraharmonic_aggregation.core.kernel, supraharmonic_aggregation.models
+  functions:
+    - _kernel_mean_abs(config: AnalysisConfig, frequency_khz: float) -> float [line 12]
+    - compute_analytical_statistics(config: AnalysisConfig) -> StatisticsFrame [line 22]
+
+[supraharmonic_aggregation.analysis.scaling]
+  file: src\supraharmonic_aggregation\analysis\scaling.py
+  role: analysis
+  doc: Scaling-law evaluation utilities.
+  internal deps: supraharmonic_aggregation.analysis.analytical, supraharmonic_aggregation.config, supraharmonic_aggregation.models
+  functions:
+    - evaluate_scaling_laws(config: AnalysisConfig, densities: list[float], coherence: float) -> StatisticsFrame [line 10]
+
+[supraharmonic_aggregation.analysis.tail]
+  file: src\supraharmonic_aggregation\analysis\tail.py
+  role: analysis
+  doc: Tail and exceedance metric computations.
+  internal deps: supraharmonic_aggregation.models
+  functions:
+    - _quantile(sorted_values: list[float], q: float) -> float [line 10]
+    - compute_tail_metrics(samples: Iterable[float], percentiles: tuple[int, ...]=(90, 95, 99), threshold: float | None=None) -> TailMetrics [line 22]
+
+[supraharmonic_aggregation.analysis.validation]
+  file: src\supraharmonic_aggregation\analysis\validation.py
+  role: analysis
+  doc: Model validity checks.
+  internal deps: supraharmonic_aggregation.config, supraharmonic_aggregation.models
+  functions:
+    - check_integrability_conditions(config: AnalysisConfig) -> IntegrabilityReport [line 9]
+
+[supraharmonic_aggregation.api]
+  file: src\supraharmonic_aggregation\api.py
+  role: package infrastructure
+  doc: User-facing API for analysis and pipeline execution.
+  internal deps: supraharmonic_aggregation.analysis.analytical, supraharmonic_aggregation.artifacts.generator, supraharmonic_aggregation.artifacts.manifest, supraharmonic_aggregation.benchmark.compare, supraharmonic_aggregation.config, supraharmonic_aggregation.governance.manifest, supraharmonic_aggregation.logging_config, supraharmonic_aggregation.models, supraharmonic_aggregation.simulation.monte_carlo
+  functions:
+    - default_config() -> AnalysisConfig [line 19]
+    - analyze(config: AnalysisConfig) -> RunBundle [line 24]
+    - generate_artifacts(run: RunBundle, output_dir: str | None=None) -> list[str] [line 75]
+    - run_pipeline(config_path: str | None=None, output_dir: str='manuscript/artifacts') -> RunBundle [line 86]
+
+[supraharmonic_aggregation.artifacts]
+  file: src\supraharmonic_aggregation\artifacts\__init__.py
+  role: artifact generation
+  doc: Publication artifact generation tools.
+  __all__: ArtifactGenerator, build_artifact_manifest
+  internal deps: supraharmonic_aggregation.generator, supraharmonic_aggregation.manifest
+
+[supraharmonic_aggregation.artifacts.generator]
+  file: src\supraharmonic_aggregation\artifacts\generator.py
+  role: artifact generation
+  doc: Generate manuscript-required tables and figures.
+  constants: FIGURE_FILES, TABLE_FILES, _MINIMAL_PNG
+  internal deps: supraharmonic_aggregation.models
+  classes:
+    - class ArtifactGenerator [line 40]
+      * _ensure_dir(self) -> Path [line 45]
+      * generate_tables(self, run: RunBundle) -> list[str] [line 50]
+      * generate_figures(self, run: RunBundle) -> list[str] [line 64]
+
+[supraharmonic_aggregation.artifacts.manifest]
+  file: src\supraharmonic_aggregation\artifacts\manifest.py
+  role: artifact generation
+  doc: Artifact manifest helpers.
+  internal deps: (none)
+  functions:
+    - build_artifact_manifest(paths: list[str]) -> dict[str, list[str]] [line 8]
+
+[supraharmonic_aggregation.benchmark]
+  file: src\supraharmonic_aggregation\benchmark\__init__.py
+  role: benchmark
+  doc: Benchmark comparison tools.
+  __all__: compare_with_feeder_benchmark
+  internal deps: supraharmonic_aggregation.compare
+
+[supraharmonic_aggregation.benchmark.compare]
+  file: src\supraharmonic_aggregation\benchmark\compare.py
+  role: benchmark
+  doc: Comparison utilities for analytical vs benchmark/simulated outputs.
+  internal deps: supraharmonic_aggregation.models
+  functions:
+    - _index_by_frequency(rows: StatisticsFrame) -> dict[float, dict[str, float | int | str]] [line 8]
+    - compare_with_feeder_benchmark(analytical: StatisticsFrame, simulated: StatisticsFrame) -> BenchmarkComparison [line 12]
+
+[supraharmonic_aggregation.cli]
+  file: src\supraharmonic_aggregation\cli.py
+  role: package infrastructure
+  doc: Command-line interface for interactive pipeline execution.
+  internal deps: supraharmonic_aggregation.api, supraharmonic_aggregation.config
+  functions:
+    - _build_parser() -> argparse.ArgumentParser [line 13]
+    - main(argv: list[str] | None=None) -> int [line 39]
+
+[supraharmonic_aggregation.config]
+  file: src\supraharmonic_aggregation\config.py
+  role: package infrastructure
+  doc: Configuration schema and loading utilities.
+  internal deps: (none)
+  functions:
+    - default_config() -> AnalysisConfig [line 59]
+    - load_config(path: str | None) -> AnalysisConfig [line 66]
+    - save_config(config: AnalysisConfig, path: str) -> str [line 79]
+  classes:
+    - class AnalysisConfig [line 11]
+      * validate(self) -> None [line 28]
+      * to_dict(self) -> dict[str, object] [line 45]
+      * from_dict(cls, payload: dict[str, object]) -> 'AnalysisConfig' [line 50]
+
+[supraharmonic_aggregation.core]
+  file: src\supraharmonic_aggregation\core\__init__.py
+  role: core
+  doc: Core model components.
+  __all__: ExponentialKernel, PropagationKernel, Source, SourceMark, SourcePopulation, SupraharmonicAggregator, generate_source_population
+  internal deps: supraharmonic_aggregation.aggregator, supraharmonic_aggregation.kernel, supraharmonic_aggregation.marks
+
+[supraharmonic_aggregation.core.aggregator]
+  file: src\supraharmonic_aggregation\core\aggregator.py
+  role: core
+  doc: Aggregation engine for complex PCC voltage.
+  internal deps: supraharmonic_aggregation.core.kernel
+  classes:
+    - class Source [line 13]
+    - class SupraharmonicAggregator [line 23]
+      * __init__(self, kernel: PropagationKernel) -> None [line 26]
+      * aggregate_complex_voltage(self, frequency_khz: float, sources: SourcePopulation) -> complex [line 29]
+      * aggregate_magnitude(self, frequency_khz: float, sources: SourcePopulation) -> float [line 44]
+
+[supraharmonic_aggregation.core.kernel]
+  file: src\supraharmonic_aggregation\core\kernel.py
+  role: core
+  doc: Propagation kernel abstractions.
+  internal deps: (none)
+  classes:
+    - class PropagationKernel(Protocol) [line 10]
+      * impedance(self, frequency_khz: float, distance_m: float) -> complex [line 13]
+    - class ExponentialKernel [line 18]
+      * impedance(self, frequency_khz: float, distance_m: float) -> complex [line 24]
+
+[supraharmonic_aggregation.core.marks]
+  file: src\supraharmonic_aggregation\core\marks.py
+  role: core
+  doc: Source mark models and spatial population utilities.
+  internal deps: supraharmonic_aggregation.core.aggregator
+  functions:
+    - _sample_poisson(lam: float, rng: random.Random) -> int [line 22]
+    - _sample_mark(rng: random.Random, coherence: float, base_current_a: float, admittance_s: float, common_phase: float) -> SourceMark [line 36]
+    - generate_source_population(density: float, region_radius_m: float, coherence: float, base_current_a: float, admittance_s: float, rng: random.Random) -> list[Source] [line 50]
+    - amplitudes(population: Iterable[Source]) -> list[float] [line 70]
+  classes:
+    - class SourceMark [line 14]
+
+[supraharmonic_aggregation.governance]
+  file: src\supraharmonic_aggregation\governance\__init__.py
+  role: governance
+  doc: Governance helpers.
+  __all__: export_run_manifest
+  internal deps: supraharmonic_aggregation.manifest
+
+[supraharmonic_aggregation.governance.manifest]
+  file: src\supraharmonic_aggregation\governance\manifest.py
+  role: governance
+  doc: Run manifest export utilities.
+  internal deps: supraharmonic_aggregation.models
+  functions:
+    - export_run_manifest(run: RunBundle, path: str) -> str [line 11]
+
+[supraharmonic_aggregation.logging_config]
+  file: src\supraharmonic_aggregation\logging_config.py
+  role: package infrastructure
+  doc: Structured log writing helpers.
+  internal deps: (none)
+  functions:
+    - _utc_now() -> str [line 13]
+    - create_logger(run_id: str, log_dir: str) -> StructuredLogger [line 67]
+  classes:
+    - class StructuredLogger [line 18]
+      * __post_init__(self) -> None [line 28]
+      * log_event(self, stage: str, event: str, status: str, duration_ms: int, component: str, message: str, trace_id: str | None=None) -> None [line 36]
+      * log_statistics(self, payload: dict[str, Any]) -> None [line 61]
+
+[supraharmonic_aggregation.models]
+  file: src\supraharmonic_aggregation\models.py
+  role: package infrastructure
+  doc: Shared typed data models used across the package.
+  internal deps: (none)
+  classes:
+    - class TailMetrics [line 13]
+    - class IntegrabilityReport [line 22]
+    - class MonteCarloResult [line 31]
+    - class BenchmarkComparison [line 39]
+    - class RunBundle [line 46]
+      * to_dict(self) -> dict[str, Any] [line 59]
+
+[supraharmonic_aggregation.simulation]
+  file: src\supraharmonic_aggregation\simulation\__init__.py
+  role: simulation
+  doc: Simulation utilities.
+  __all__: MonteCarloRunner
+  internal deps: supraharmonic_aggregation.monte_carlo
+
+[supraharmonic_aggregation.simulation.monte_carlo]
+  file: src\supraharmonic_aggregation\simulation\monte_carlo.py
+  role: simulation
+  doc: Monte Carlo runner for aggregation experiments.
+  internal deps: supraharmonic_aggregation.analysis.tail, supraharmonic_aggregation.config, supraharmonic_aggregation.core.aggregator, supraharmonic_aggregation.core.kernel, supraharmonic_aggregation.core.marks, supraharmonic_aggregation.models
+  classes:
+    - class MonteCarloRunner [line 15]
+      * __init__(self, config: AnalysisConfig, seed: int | None=None) -> None [line 18]
+      * run(self, n_samples: int) -> MonteCarloResult [line 22]
+
+5) INTERNAL DEPENDENCY EDGES
+--------------------------------------------------------------------------------
+- supraharmonic_aggregation -> supraharmonic_aggregation._version
+- supraharmonic_aggregation -> supraharmonic_aggregation.api
+- supraharmonic_aggregation -> supraharmonic_aggregation.config
+- supraharmonic_aggregation -> supraharmonic_aggregation.models
+- supraharmonic_aggregation.analysis -> supraharmonic_aggregation.analytical
+- supraharmonic_aggregation.analysis -> supraharmonic_aggregation.scaling
+- supraharmonic_aggregation.analysis -> supraharmonic_aggregation.tail
+- supraharmonic_aggregation.analysis -> supraharmonic_aggregation.validation
+- supraharmonic_aggregation.analysis.analytical -> supraharmonic_aggregation.config
+- supraharmonic_aggregation.analysis.analytical -> supraharmonic_aggregation.core.kernel
+- supraharmonic_aggregation.analysis.analytical -> supraharmonic_aggregation.models
+- supraharmonic_aggregation.analysis.scaling -> supraharmonic_aggregation.analysis.analytical
+- supraharmonic_aggregation.analysis.scaling -> supraharmonic_aggregation.config
+- supraharmonic_aggregation.analysis.scaling -> supraharmonic_aggregation.models
+- supraharmonic_aggregation.analysis.tail -> supraharmonic_aggregation.models
+- supraharmonic_aggregation.analysis.validation -> supraharmonic_aggregation.config
+- supraharmonic_aggregation.analysis.validation -> supraharmonic_aggregation.models
+- supraharmonic_aggregation.api -> supraharmonic_aggregation.analysis.analytical
+- supraharmonic_aggregation.api -> supraharmonic_aggregation.artifacts.generator
+- supraharmonic_aggregation.api -> supraharmonic_aggregation.artifacts.manifest
+- supraharmonic_aggregation.api -> supraharmonic_aggregation.benchmark.compare
+- supraharmonic_aggregation.api -> supraharmonic_aggregation.config
+- supraharmonic_aggregation.api -> supraharmonic_aggregation.governance.manifest
+- supraharmonic_aggregation.api -> supraharmonic_aggregation.logging_config
+- supraharmonic_aggregation.api -> supraharmonic_aggregation.models
+- supraharmonic_aggregation.api -> supraharmonic_aggregation.simulation.monte_carlo
+- supraharmonic_aggregation.artifacts -> supraharmonic_aggregation.generator
+- supraharmonic_aggregation.artifacts -> supraharmonic_aggregation.manifest
+- supraharmonic_aggregation.artifacts.generator -> supraharmonic_aggregation.models
+- supraharmonic_aggregation.benchmark -> supraharmonic_aggregation.compare
+- supraharmonic_aggregation.benchmark.compare -> supraharmonic_aggregation.models
+- supraharmonic_aggregation.cli -> supraharmonic_aggregation.api
+- supraharmonic_aggregation.cli -> supraharmonic_aggregation.config
+- supraharmonic_aggregation.core -> supraharmonic_aggregation.aggregator
+- supraharmonic_aggregation.core -> supraharmonic_aggregation.kernel
+- supraharmonic_aggregation.core -> supraharmonic_aggregation.marks
+- supraharmonic_aggregation.core.aggregator -> supraharmonic_aggregation.core.kernel
+- supraharmonic_aggregation.core.marks -> supraharmonic_aggregation.core.aggregator
+- supraharmonic_aggregation.governance -> supraharmonic_aggregation.manifest
+- supraharmonic_aggregation.governance.manifest -> supraharmonic_aggregation.models
+- supraharmonic_aggregation.simulation -> supraharmonic_aggregation.monte_carlo
+- supraharmonic_aggregation.simulation.monte_carlo -> supraharmonic_aggregation.analysis.tail
+- supraharmonic_aggregation.simulation.monte_carlo -> supraharmonic_aggregation.config
+- supraharmonic_aggregation.simulation.monte_carlo -> supraharmonic_aggregation.core.aggregator
+- supraharmonic_aggregation.simulation.monte_carlo -> supraharmonic_aggregation.core.kernel
+- supraharmonic_aggregation.simulation.monte_carlo -> supraharmonic_aggregation.core.marks
+- supraharmonic_aggregation.simulation.monte_carlo -> supraharmonic_aggregation.models
+
+6) EXTERNAL IMPORT FOOTPRINT
+--------------------------------------------------------------------------------
+- __future__: referenced in 17 import statements
+- pathlib: referenced in 7 import statements
+- dataclasses: referenced in 7 import statements
+- typing: referenced in 6 import statements
+- json: referenced in 4 import statements
+- math: referenced in 3 import statements
+- uuid: referenced in 2 import statements
+- random: referenced in 2 import statements
+- csv: referenced in 1 import statements
+- argparse: referenced in 1 import statements
+- cmath: referenced in 1 import statements
+- datetime: referenced in 1 import statements
+
+7) ENTRY POINTS AND EXECUTION SURFACES
+--------------------------------------------------------------------------------
+- supraharmonic-pipeline: supraharmonic_aggregation.cli:main
+- CLI module: src\supraharmonic_aggregation\cli.py
+  - _build_parser() -> argparse.ArgumentParser
+  - main(argv: list[str] | None=None) -> int
+
+8) TEST-TO-PACKAGE MAPPING
+--------------------------------------------------------------------------------
+- tests\acceptance\test_objectives.py
+  - uses: supraharmonic_aggregation.analysis.analytical
+  - uses: supraharmonic_aggregation.analysis.tail
+  - uses: supraharmonic_aggregation.analysis.validation
+  - uses: supraharmonic_aggregation.api
+  - uses: supraharmonic_aggregation.simulation.monte_carlo
+- tests\conftest.py
+  - uses: supraharmonic_aggregation.config
+- tests\integration\test_analytical_pipeline.py
+  - uses: supraharmonic_aggregation.api
+- tests\integration\test_artifact_generator.py
+  - uses: supraharmonic_aggregation.api
+- tests\integration\test_benchmark_compare.py
+  - uses: supraharmonic_aggregation.benchmark.compare
+- tests\integration\test_monte_carlo_vs_analytical.py
+  - uses: supraharmonic_aggregation.analysis.analytical
+  - uses: supraharmonic_aggregation.simulation.monte_carlo
+- tests\pipeline\test_cli_pipeline.py
+  - uses: supraharmonic_aggregation.cli
+- tests\unit\test_aggregator.py
+  - uses: supraharmonic_aggregation.core.aggregator
+  - uses: supraharmonic_aggregation.core.kernel
+  - uses: supraharmonic_aggregation.core.marks
+- tests\unit\test_analytical.py
+  - uses: supraharmonic_aggregation.analysis.analytical
+- tests\unit\test_integrability.py
+  - uses: supraharmonic_aggregation.analysis.validation
+- tests\unit\test_kernel.py
+  - uses: supraharmonic_aggregation.core.kernel
+- tests\unit\test_scaling.py
+  - uses: supraharmonic_aggregation.analysis.scaling
+- tests\unit\test_tail_metrics.py
+  - uses: supraharmonic_aggregation.analysis.tail
+
+9) EXAMPLES AND SCRIPTS
+--------------------------------------------------------------------------------
+EXAMPLES:
+  - examples\pipeline_cli.py
+    doc: CLI execution example.
+    internal deps: supraharmonic_aggregation.cli
+  - examples\quickstart.py
+    doc: Quickstart example for supraharmonic aggregation.
+    funcs: main() -> None
+    internal deps: supraharmonic_aggregation
+SCRIPTS:
+  - scripts\analyze_synthetic_benchmark.py
+    doc: Analyze synthetic supraharmonic data and generate manuscript-ready tables.
+    funcs: parse_args() -> argparse.Namespace, read_rows(path: Path) -> list[dict[str, float | str]], percentile(values: list[float], p: float) -> float, summarize_magnitudes(mags: list[float], threshold_v: float) -> dict[str, float], write_csv(path: Path, rows: list[dict[str, object]]) -> None, grouped_rows(rows: list[dict[str, float | str]]) -> dict[int, list[dict[str, float | str]]], build_kernel_interpolator(rows: list[dict[str, float | str]]) -> Callable[[float], complex], poisson_knuth(rng: random.Random, lam: float) -> int, sample_uniform_disk_point(rng: random.Random, radius_m: float) -> tuple[float, float], sample_thomas_distances(rng: random.Random, n_points: int, radius_m: float, mean_cluster_size: float=6.0, cluster_sigma_m: float=70.0) -> list[float], simulate_robustness_scenario(scenario: str, source_pool: list[SourceSample], counts: list[int], kernel_z: Callable[[float], complex], radius_m: float, n_runs: int, rng: random.Random) -> list[float], bootstrap_ci(values: list[float], stat_fn: Callable[[list[float]], float], rng_seed: int, rounds: int=800) -> tuple[float, float], format_complex(z: complex) -> str, metric_rows(baseline_metrics: dict[str, float], scenario_metrics: dict[str, dict[str, float]]) -> list[dict[str, object]], build_report_markdown(baseline_metrics: dict[str, float], threshold_v: float, robustness_table_rows: list[dict[str, object]], output_dir: Path) -> str, main() -> None
+  - scripts\export_package_architecture.py
+    doc: Export a comprehensive architecture report for the repository.
+    funcs: parse_args() -> argparse.Namespace, tree_lines(root: Path, max_depth: int) -> list[str], iter_python_files(root: Path) -> list[Path], unparse_safe(node: ast.AST | None) -> str, build_signature(node: ast.FunctionDef | ast.AsyncFunctionDef) -> str, extract_calls(node: ast.AST) -> list[str], resolve_relative_import(module_name: str, level: int, mod: str | None) -> str, module_name_from_path(path: Path, root: Path) -> str, parse_module(path: Path, root: Path, package_name: str) -> ModuleInfo, read_pyproject_metadata(root: Path) -> dict[str, str], collect_test_mapping(module_infos: list[ModuleInfo], package_name: str) -> dict[str, set[str]], module_role(path: Path) -> str, file_type_counts(paths: Iterable[Path]) -> Counter[str], walk_all_paths(root: Path) -> list[Path], render_report(root: Path, output: Path, max_tree_depth: int, include_source: bool) -> str, main() -> None
+  - scripts\plot_synthetic_benchmark.py
+    doc: Generate outline-aligned synthetic benchmark plots from real CSV data.
+    funcs: parse_args() -> argparse.Namespace, read_rows(path: Path) -> list[dict[str, float | str]], percentile(values: list[float] | np.ndarray, p: float) -> float, poisson_knuth(rng: random.Random, lam: float) -> int, sample_uniform_disk_point(rng: random.Random, radius_m: float) -> tuple[float, float], sample_uniform_distances(rng: random.Random, n_points: int, radius_m: float) -> list[float], sample_thomas_distances(rng: random.Random, n_points: int, radius_m: float, mean_cluster_size: float=6.0, cluster_sigma_m: float=70.0) -> list[float], sample_hardcore_repulsive_distances(rng: random.Random, n_points: int, radius_m: float, min_sep_m: float) -> list[float], sample_weighted_distances(rng: random.Random, n_points: int, radius_m: float, model: str) -> list[float], build_kernel_interpolator(rows: list[dict[str, float | str]]) -> Callable[[float], complex], prepare_source_pool(rows: list[dict[str, float | str]]) -> list[SourceSample], sample_distances(rng: random.Random, n_sources: int, radius_m: float, spatial_model: str) -> list[float], simulate_magnitudes(source_pool: list[SourceSample], kernel_z: Callable[[float], complex], rng: random.Random, lambda_density: float, radius_m: float, n_runs: int, spatial_model: str='uniform', coherence_weight: float=0.0, coherence_kappa: float=6.0, heavy_tailed_current: bool=False, random_admittance: bool=False) -> np.ndarray, empirical_ccdf(values: np.ndarray) -> tuple[np.ndarray, np.ndarray], save_figure(fig: plt.Figure, path: Path) -> None, figure1_kernel_vs_distance(rows: list[dict[str, float | str]], freq_hz: float, out_dir: Path) -> Path, figure2_rms_vs_density(source_pool: list[SourceSample], kernel_z: Callable[[float], complex], rng_seed: int, lambda0: float, radius_m: float, out_dir: Path) -> Path, figure3_percentile_contour(source_pool: list[SourceSample], kernel_z: Callable[[float], complex], rng_seed: int, lambda0: float, out_dir: Path) -> Path, figure4_ccdf_spatial_models(source_pool: list[SourceSample], kernel_z: Callable[[float], complex], rng_seed: int, lambda0: float, radius_m: float, out_dir: Path) -> Path, figure5_phase_sweep(source_pool: list[SourceSample], kernel_z: Callable[[float], complex], rng_seed: int, lambda0: float, radius_m: float, out_dir: Path) -> Path, intensity_field(model: str, lambda0: float, radius_m: float, n_grid: int=180) -> tuple[np.ndarray, np.ndarray, np.ndarray], figure6_inhomogeneous_panel(source_pool: list[SourceSample], kernel_z: Callable[[float], complex], rng_seed: int, lambda0: float, radius_m: float, out_dir: Path) -> Path, figure7_validation_scatter(rows: list[dict[str, float | str]], source_pool: list[SourceSample], out_dir: Path) -> Path, figure8_screening_chart(source_pool: list[SourceSample], kernel_z: Callable[[float], complex], rng_seed: int, lambda0: float, radius_m: float, freq_hz: float, out_dir: Path) -> Path, figure9_count_distribution(rows: list[dict[str, float | str]], out_dir: Path) -> Path, write_manifest(path: Path, rows: list[dict[str, str]]) -> None, main() -> None
+
+10) FULL PACKAGE SOURCE LISTINGS
+--------------------------------------------------------------------------------
+FILE: src\supraharmonic_aggregation\__init__.py
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"""Public package interface for supraharmonic aggregation workflows."""
+
+from ._version import __version__
+from .api import analyze, default_config, generate_artifacts, run_pipeline
+from .config import AnalysisConfig
+from .models import (
+    BenchmarkComparison,
+    IntegrabilityReport,
+    MonteCarloResult,
+    RunBundle,
+    TailMetrics,
+)
+
+__all__ = [
+    "__version__",
+    "AnalysisConfig",
+    "TailMetrics",
+    "IntegrabilityReport",
+    "MonteCarloResult",
+    "BenchmarkComparison",
+    "RunBundle",
+    "default_config",
+    "analyze",
+    "generate_artifacts",
+    "run_pipeline",
+]
+
+FILE: src\supraharmonic_aggregation\_version.py
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"""Package version metadata."""
+
+__version__ = "0.1.0"
+
+FILE: src\supraharmonic_aggregation\analysis\__init__.py
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"""Analytical and validation routines."""
+
+from .analytical import compute_analytical_statistics
+from .scaling import evaluate_scaling_laws
+from .tail import compute_tail_metrics
+from .validation import check_integrability_conditions
+
+__all__ = [
+    "compute_analytical_statistics",
+    "evaluate_scaling_laws",
+    "compute_tail_metrics",
+    "check_integrability_conditions",
+]
+
+FILE: src\supraharmonic_aggregation\analysis\analytical.py
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"""Closed/semi-closed analytical statistics approximations."""
+
+from __future__ import annotations
+
+import math
+
+from ..config import AnalysisConfig
+from ..core.kernel import ExponentialKernel
+from ..models import StatisticsFrame
+
+
+def _kernel_mean_abs(config: AnalysisConfig, frequency_khz: float) -> float:
+    kernel = ExponentialKernel(alpha=config.kernel_alpha, resonance_scale=config.resonance_scale)
+    radius = max(config.region_radius_m, 1.0)
+    samples = []
+    for idx in range(1, 65):
+        distance = (idx / 64.0) * radius
+        samples.append(abs(kernel.impedance(frequency_khz, distance)))
+    return sum(samples) / len(samples)
+
+
+def compute_analytical_statistics(config: AnalysisConfig) -> StatisticsFrame:
+    """Compute deterministic analytical statistics for each configured frequency."""
+    config.validate()
+    rows: StatisticsFrame = []
+    density_scale = max(config.density, 1e-9) ** 0.5
+    for frequency in config.frequencies_khz:
+        k_mean = _kernel_mean_abs(config, frequency)
+        mean_abs_v = config.base_current_a * k_mean * config.coherence * config.density * 0.1
+        var_v = (config.base_current_a**2) * (k_mean**2) * (1.0 - config.coherence**2) * config.density
+        rms_abs_v = math.sqrt(max(var_v + mean_abs_v**2, 0.0))
+        rows.append(
+            {
+                "frequency_khz": frequency,
+                "mean_abs_v": mean_abs_v,
+                "var_v": var_v,
+                "rms_abs_v": rms_abs_v,
+                "density_scaling": density_scale,
+            }
+        )
+    return rows
+
+FILE: src\supraharmonic_aggregation\analysis\scaling.py
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"""Scaling-law evaluation utilities."""
+
+from __future__ import annotations
+
+from ..config import AnalysisConfig
+from ..models import StatisticsFrame
+from .analytical import compute_analytical_statistics
+
+
+def evaluate_scaling_laws(config: AnalysisConfig, densities: list[float], coherence: float) -> StatisticsFrame:
+    """Evaluate RMS scaling trends over candidate densities."""
+    rows: StatisticsFrame = []
+    for density in densities:
+        cfg = AnalysisConfig.from_dict({**config.to_dict(), "density": density, "coherence": coherence})
+        stats = compute_analytical_statistics(cfg)
+        rms_mean = sum(float(row["rms_abs_v"]) for row in stats) / len(stats)
+        rows.append(
+            {
+                "density": density,
+                "coherence": coherence,
+                "mean_rms_abs_v": rms_mean,
+                "sqrt_density": density ** 0.5,
+            }
+        )
+    return rows
+
+FILE: src\supraharmonic_aggregation\analysis\tail.py
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"""Tail and exceedance metric computations."""
+
+from __future__ import annotations
+
+from typing import Iterable
+
+from ..models import TailMetrics
+
+
+def _quantile(sorted_values: list[float], q: float) -> float:
+    if not sorted_values:
+        return 0.0
+    if len(sorted_values) == 1:
+        return sorted_values[0]
+    position = q * (len(sorted_values) - 1)
+    left = int(position)
+    right = min(left + 1, len(sorted_values) - 1)
+    weight = position - left
+    return sorted_values[left] * (1.0 - weight) + sorted_values[right] * weight
+
+
+def compute_tail_metrics(
+    samples: Iterable[float],
+    percentiles: tuple[int, ...] = (90, 95, 99),
+    threshold: float | None = None,
+) -> TailMetrics:
+    """Compute percentile and exceedance metrics from sample values."""
+    values = sorted(float(value) for value in samples)
+    percentile_map: dict[int, float] = {}
+    for percentile in percentiles:
+        percentile_map[percentile] = _quantile(values, percentile / 100.0)
+    exceedance_probability: float | None = None
+    if threshold is not None and values:
+        exceedance_probability = sum(1 for value in values if value > threshold) / len(values)
+    return TailMetrics(
+        percentiles=percentile_map,
+        exceedance_probability=exceedance_probability,
+        sample_size=len(values),
+    )
+
+FILE: src\supraharmonic_aggregation\analysis\validation.py
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"""Model validity checks."""
+
+from __future__ import annotations
+
+from ..config import AnalysisConfig
+from ..models import IntegrabilityReport
+
+
+def check_integrability_conditions(config: AnalysisConfig) -> IntegrabilityReport:
+    """Validate boundedness conditions from configured attenuation parameters."""
+    config.validate()
+    finite_ok = config.region_radius_m > 0 and config.density > 0
+    asymptotic_ok = config.kernel_alpha > 0 and config.admittance_s >= 0
+    details = (
+        "Finite-domain conditions satisfied."
+        if finite_ok
+        else "Finite-domain conditions violated."
+    )
+    if asymptotic_ok:
+        details += " Asymptotic attenuation condition satisfied."
+    else:
+        details += " Asymptotic attenuation condition violated."
+    return IntegrabilityReport(
+        finite_domain_ok=finite_ok,
+        asymptotic_domain_ok=asymptotic_ok,
+        details=details,
+    )
+
+FILE: src\supraharmonic_aggregation\api.py
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"""User-facing API for analysis and pipeline execution."""
+
+from __future__ import annotations
+
+import uuid
+from pathlib import Path
+
+from .analysis.analytical import compute_analytical_statistics
+from .benchmark.compare import compare_with_feeder_benchmark
+from .config import AnalysisConfig, default_config as _default_config, load_config
+from .governance.manifest import export_run_manifest
+from .logging_config import create_logger
+from .models import RunBundle
+from .simulation.monte_carlo import MonteCarloRunner
+from .artifacts.generator import ArtifactGenerator
+from .artifacts.manifest import build_artifact_manifest
+
+
+def default_config() -> AnalysisConfig:
+    """Return the package default configuration."""
+    return _default_config()
+
+
+def analyze(config: AnalysisConfig) -> RunBundle:
+    """Run analytical + simulation + benchmark comparison workflow."""
+    config.validate()
+    run_id = str(uuid.uuid4())
+    logger = create_logger(run_id=run_id, log_dir=config.log_dir)
+    logger.log_event(
+        stage="analysis",
+        event="start",
+        status="ok",
+        duration_ms=0,
+        component="api.analyze",
+        message="Analysis workflow started.",
+    )
+
+    analytical = compute_analytical_statistics(config)
+    mc = MonteCarloRunner(config=config, seed=config.seed).run(config.monte_carlo_samples)
+    benchmark = compare_with_feeder_benchmark(analytical=analytical, simulated=mc.statistics_frame)
+
+    run = RunBundle(
+        run_id=run_id,
+        config=config.to_dict(),
+        analytical=analytical,
+        monte_carlo=mc,
+        benchmark=benchmark,
+        log_path=str(logger.run_log_path),
+        stats_log_path=str(logger.stats_log_path),
+    )
+    first_stats = mc.statistics_frame[0] if mc.statistics_frame else {}
+    logger.log_statistics(
+        {
+            "frequency_khz": first_stats.get("frequency_khz", 0.0),
+            "mean_abs_v": first_stats.get("mean_abs_v", 0.0),
+            "var_v": first_stats.get("var_v", 0.0),
+            "rms_abs_v": first_stats.get("rms_abs_v", 0.0),
+            "p95_abs_v": first_stats.get("p95_abs_v", 0.0),
+            "sample_size": first_stats.get("sample_size", 0),
+            "ci_lower": 0.0,
+            "ci_upper": 0.0,
+        }
+    )
+    logger.log_event(
+        stage="analysis",
+        event="complete",
+        status="ok",
+        duration_ms=0,
+        component="api.analyze",
+        message="Analysis workflow completed.",
+    )
+    return run
+
+
+def generate_artifacts(run: RunBundle, output_dir: str | None = None) -> list[str]:
+    """Generate manuscript tables and figures for the given run."""
+    out = output_dir or str(run.config.get("output_dir", "manuscript/artifacts"))
+    generator = ArtifactGenerator(output_dir=out)
+    table_paths = generator.generate_tables(run)
+    figure_paths = generator.generate_figures(run)
+    paths = table_paths + figure_paths
+    run.artifact_paths = paths
+    return paths
+
+
+def run_pipeline(config_path: str | None = None, output_dir: str = "manuscript/artifacts") -> RunBundle:
+    """Run end-to-end workflow using config file or defaults."""
+    config = load_config(config_path)
+    config.output_dir = output_dir
+    run = analyze(config)
+    artifact_paths = generate_artifacts(run, output_dir=output_dir)
+    manifest_data = build_artifact_manifest(artifact_paths)
+    manifest_data["run_id"] = run.run_id
+    manifest_path = Path(output_dir) / "run_manifest.json"
+    run.run_manifest_path = export_run_manifest(run, str(manifest_path))
+    return run
+
+FILE: src\supraharmonic_aggregation\artifacts\__init__.py
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"""Publication artifact generation tools."""
+
+from .generator import ArtifactGenerator
+from .manifest import build_artifact_manifest
+
+__all__ = ["ArtifactGenerator", "build_artifact_manifest"]
+
+FILE: src\supraharmonic_aggregation\artifacts\generator.py
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"""Generate manuscript-required tables and figures."""
+
+from __future__ import annotations
+
+import csv
+from dataclasses import dataclass
+from pathlib import Path
+
+from ..models import RunBundle
+
+TABLE_FILES = [
+    "table_1_scenario_matrix.csv",
+    "table_2_analytical_expressions.csv",
+    "table_3_baseline_ppp_by_frequency.csv",
+    "table_4_sensitivity_summary.csv",
+    "table_5_feeder_benchmark_spec.csv",
+    "table_6_analytical_vs_feeder_metrics.csv",
+]
+
+FIGURE_FILES = [
+    "figure_1_transfer_impedance_vs_distance.png",
+    "figure_2_rms_vs_density.png",
+    "figure_3_percentile_design_curves.png",
+    "figure_4_ccdf_ppp_cluster_repulsive.png",
+    "figure_5_phase_coherence_sweep.png",
+    "figure_6_inhomogeneous_intensity_outcomes.png",
+    "figure_7_feeder_validation_scatter.png",
+    "figure_8_allowable_density_screening_chart.png",
+]
+
+# 1x1 transparent PNG
+_MINIMAL_PNG = (
+    b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01"
+    b"\x08\x06\x00\x00\x00\x1f\x15\xc4\x89\x00\x00\x00\x0bIDATx\x9cc``\x00\x00\x00\x02\x00\x01"
+    b"\xe2!\xbc3\x00\x00\x00\x00IEND\xaeB`\x82"
+)
+
+
+@dataclass(slots=True)
+class ArtifactGenerator:
+    """Generate publication tables and figures for a run."""
+
+    output_dir: str
+
+    def _ensure_dir(self) -> Path:
+        base = Path(self.output_dir)
+        base.mkdir(parents=True, exist_ok=True)
+        return base
+
+    def generate_tables(self, run: RunBundle) -> list[str]:
+        """Create all required table files as CSV outputs."""
+        base = self._ensure_dir()
+        paths: list[str] = []
+        for filename in TABLE_FILES:
+            target = base / filename
+            with target.open("w", newline="", encoding="utf-8") as handle:
+                writer = csv.writer(handle)
+                writer.writerow(["run_id", run.run_id])
+                writer.writerow(["rows_analytical", len(run.analytical)])
+                writer.writerow(["rows_benchmark", len(run.benchmark.rows)])
+            paths.append(str(target))
+        return paths
+
+    def generate_figures(self, run: RunBundle) -> list[str]:
+        """Create all required figure files as deterministic PNG placeholders."""
+        base = self._ensure_dir()
+        paths: list[str] = []
+        for filename in FIGURE_FILES:
+            target = base / filename
+            target.write_bytes(_MINIMAL_PNG)
+            paths.append(str(target))
+        return paths
+
+FILE: src\supraharmonic_aggregation\artifacts\manifest.py
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"""Artifact manifest helpers."""
+
+from __future__ import annotations
+
+from pathlib import Path
+
+
+def build_artifact_manifest(paths: list[str]) -> dict[str, list[str]]:
+    """Build a lightweight manifest split by extension type."""
+    tables: list[str] = []
+    figures: list[str] = []
+    for path in paths:
+        suffix = Path(path).suffix.lower()
+        if suffix in {".csv", ".tex"}:
+            tables.append(path)
+        elif suffix in {".png", ".pdf", ".svg"}:
+            figures.append(path)
+    return {"tables": tables, "figures": figures}
+
+FILE: src\supraharmonic_aggregation\benchmark\__init__.py
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"""Benchmark comparison tools."""
+
+from .compare import compare_with_feeder_benchmark
+
+__all__ = ["compare_with_feeder_benchmark"]
+
+FILE: src\supraharmonic_aggregation\benchmark\compare.py
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"""Comparison utilities for analytical vs benchmark/simulated outputs."""
+
+from __future__ import annotations
+
+from ..models import BenchmarkComparison, StatisticsFrame
+
+
+def _index_by_frequency(rows: StatisticsFrame) -> dict[float, dict[str, float | int | str]]:
+    return {float(row["frequency_khz"]): row for row in rows}
+
+
+def compare_with_feeder_benchmark(
+    analytical: StatisticsFrame,
+    simulated: StatisticsFrame,
+) -> BenchmarkComparison:
+    """Compute relative error metrics for overlapping frequency points."""
+    analytical_idx = _index_by_frequency(analytical)
+    simulated_idx = _index_by_frequency(simulated)
+    rows: StatisticsFrame = []
+    for frequency in sorted(set(analytical_idx).intersection(simulated_idx)):
+        a_row = analytical_idx[frequency]
+        s_row = simulated_idx[frequency]
+        a_rms = float(a_row.get("rms_abs_v", 0.0))
+        s_rms = float(s_row.get("rms_abs_v", 0.0))
+        denom = max(abs(s_rms), 1e-9)
+        rel_error_rms = abs(a_rms - s_rms) / denom
+        a_p95 = float(a_row.get("p95_abs_v", a_rms))
+        s_p95 = float(s_row.get("p95_abs_v", s_rms))
+        rel_error_p95 = abs(a_p95 - s_p95) / max(abs(s_p95), 1e-9)
+        rows.append(
+            {
+                "frequency_khz": frequency,
+                "relative_error_rms": rel_error_rms,
+                "relative_error_p95": rel_error_p95,
+            }
+        )
+    return BenchmarkComparison(rows=rows)
+
+FILE: src\supraharmonic_aggregation\cli.py
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"""Command-line interface for interactive pipeline execution."""
+
+from __future__ import annotations
+
+import argparse
+import json
+from pathlib import Path
+
+from .api import default_config, run_pipeline
+from .config import save_config
+
+
+def _build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="supraharmonic-pipeline",
+        description="Guided pipeline for supraharmonic aggregation analysis.",
+    )
+    parser.add_argument("--config", type=str, default=None, help="Path to JSON config file.")
+    parser.add_argument(
+        "--output-dir",
+        type=str,
+        default="manuscript/artifacts",
+        help="Output directory for generated artifacts.",
+    )
+    parser.add_argument(
+        "--quickstart",
+        action="store_true",
+        help="Generate default config file and run with defaults.",
+    )
+    parser.add_argument(
+        "--write-default-config",
+        type=str,
+        default=None,
+        help="Write default configuration JSON to this path and exit.",
+    )
+    return parser
+
+
+def main(argv: list[str] | None = None) -> int:
+    """Run CLI pipeline and return process status code."""
+    parser = _build_parser()
+    args = parser.parse_args(argv)
+
+    if args.write_default_config:
+        path = save_config(default_config(), args.write_default_config)
+        print(f"Wrote default config: {path}")
+        return 0
+
+    config_path = args.config
+    if args.quickstart and not config_path:
+        path = Path(args.output_dir) / "default_config.json"
+        save_config(default_config(), str(path))
+        config_path = str(path)
+
+    try:
+        run = run_pipeline(config_path=config_path, output_dir=args.output_dir)
+    except Exception as exc:  # pragma: no cover - exercised in CLI failure paths
+        print(f"Pipeline failed: {exc}")
+        return 1
+
+    summary = {
+        "run_id": run.run_id,
+        "artifacts_generated": len(run.artifact_paths),
+        "manifest_path": run.run_manifest_path,
+        "log_path": run.log_path,
+        "stats_log_path": run.stats_log_path,
+    }
+    print(json.dumps(summary, indent=2))
+    return 0
+
+
+if __name__ == "__main__":  # pragma: no cover
+    raise SystemExit(main())
+
+FILE: src\supraharmonic_aggregation\config.py
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"""Configuration schema and loading utilities."""
+
+from __future__ import annotations
+
+import json
+from dataclasses import asdict, dataclass, field
+from pathlib import Path
+
+
+@dataclass(slots=True)
+class AnalysisConfig:
+    """Top-level analysis configuration."""
+
+    frequencies_khz: list[float] = field(default_factory=lambda: [2.0, 10.0, 30.0, 75.0, 150.0])
+    density: float = 12.0
+    region_radius_m: float = 500.0
+    coherence: float = 0.0
+    base_current_a: float = 1.0
+    admittance_s: float = 0.01
+    kernel_alpha: float = 0.8
+    resonance_scale: float = 0.05
+    threshold: float = 1.0
+    monte_carlo_samples: int = 128
+    seed: int = 7
+    log_dir: str = "logs"
+    output_dir: str = "manuscript/artifacts"
+
+    def validate(self) -> None:
+        """Validate this configuration and raise ValueError on invalid values."""
+        if not self.frequencies_khz:
+            raise ValueError("frequencies_khz must not be empty.")
+        if any(freq <= 0 for freq in self.frequencies_khz):
+            raise ValueError("frequencies_khz must be positive.")
+        if self.density <= 0:
+            raise ValueError("density must be positive.")
+        if self.region_radius_m <= 0:
+            raise ValueError("region_radius_m must be positive.")
+        if not (0.0 <= self.coherence <= 1.0):
+            raise ValueError("coherence must be between 0 and 1.")
+        if self.monte_carlo_samples <= 0:
+            raise ValueError("monte_carlo_samples must be positive.")
+        if self.kernel_alpha <= 0:
+            raise ValueError("kernel_alpha must be positive.")
+
+    def to_dict(self) -> dict[str, object]:
+        """Return a dict representation."""
+        return asdict(self)
+
+    @classmethod
+    def from_dict(cls, payload: dict[str, object]) -> "AnalysisConfig":
+        """Build configuration from dictionary keys."""
+        known = {field_name for field_name in cls.__dataclass_fields__}
+        kwargs = {k: v for k, v in payload.items() if k in known}
+        config = cls(**kwargs)  # type: ignore[arg-type]
+        config.validate()
+        return config
+
+
+def default_config() -> AnalysisConfig:
+    """Return the package default analysis configuration."""
+    config = AnalysisConfig()
+    config.validate()
+    return config
+
+
+def load_config(path: str | None) -> AnalysisConfig:
+    """Load configuration from JSON file path or defaults if path is None."""
+    if not path:
+        return default_config()
+    candidate = Path(path)
+    if not candidate.exists():
+        raise FileNotFoundError(f"Configuration file not found: {path}")
+    payload = json.loads(candidate.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise ValueError("Configuration JSON must be an object.")
+    return AnalysisConfig.from_dict(payload)
+
+
+def save_config(config: AnalysisConfig, path: str) -> str:
+    """Write a JSON config file to disk and return its path."""
+    out = Path(path)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(config.to_dict(), indent=2), encoding="utf-8")
+    return str(out)
+
+FILE: src\supraharmonic_aggregation\core\__init__.py
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"""Core model components."""
+
+from .aggregator import Source, SourcePopulation, SupraharmonicAggregator
+from .kernel import ExponentialKernel, PropagationKernel
+from .marks import SourceMark, generate_source_population
+
+__all__ = [
+    "PropagationKernel",
+    "ExponentialKernel",
+    "SourceMark",
+    "Source",
+    "SourcePopulation",
+    "generate_source_population",
+    "SupraharmonicAggregator",
+]
+
+FILE: src\supraharmonic_aggregation\core\aggregator.py
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"""Aggregation engine for complex PCC voltage."""
+
+from __future__ import annotations
+
+import cmath
+from dataclasses import dataclass
+from typing import Iterable
+
+from .kernel import PropagationKernel
+
+
+@dataclass(slots=True)
+class Source:
+    """A spatial source with electrical mark."""
+
+    distance_m: float
+    mark: object
+
+
+SourcePopulation = list[Source]
+
+
+class SupraharmonicAggregator:
+    """Compute aggregate complex voltage from source populations."""
+
+    def __init__(self, kernel: PropagationKernel) -> None:
+        self.kernel = kernel
+
+    def aggregate_complex_voltage(self, frequency_khz: float, sources: SourcePopulation) -> complex:
+        """Aggregate complex source contributions at one frequency."""
+        total = 0j
+        for source in sources:
+            amplitude = float(getattr(source.mark, "amplitude_a"))
+            phase = float(getattr(source.mark, "phase_rad"))
+            admittance = float(getattr(source.mark, "admittance_s"))
+            current = amplitude * cmath.exp(1j * phase)
+            z_tr = self.kernel.impedance(frequency_khz, source.distance_m)
+            denominator = 1 + admittance * z_tr
+            if abs(denominator) < 1e-12:
+                continue
+            total += (z_tr * current) / denominator
+        return total
+
+    def aggregate_magnitude(self, frequency_khz: float, sources: SourcePopulation) -> float:
+        """Return absolute aggregate voltage magnitude."""
+        return abs(self.aggregate_complex_voltage(frequency_khz, sources))
+
+FILE: src\supraharmonic_aggregation\core\kernel.py
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"""Propagation kernel abstractions."""
+
+from __future__ import annotations
+
+import math
+from dataclasses import dataclass
+from typing import Protocol
+
+
+class PropagationKernel(Protocol):
+    """Kernel protocol for transfer impedance models."""
+
+    def impedance(self, frequency_khz: float, distance_m: float) -> complex:
+        """Return complex transfer impedance at frequency and distance."""
+
+
+@dataclass(slots=True)
+class ExponentialKernel:
+    """Simple attenuation kernel with optional weak resonance modulation."""
+
+    alpha: float
+    resonance_scale: float = 0.0
+
+    def impedance(self, frequency_khz: float, distance_m: float) -> complex:
+        """Compute bounded complex impedance."""
+        distance_km = max(distance_m, 1e-9) / 1000.0
+        attenuation = math.exp(-self.alpha * distance_km)
+        resonance = 1.0 + self.resonance_scale * math.sin(frequency_khz / 12.5)
+        phase = frequency_khz * 0.0025 * distance_km
+        magnitude = max(attenuation * resonance, 1e-9)
+        return magnitude * complex(math.cos(phase), math.sin(phase))
+
+FILE: src\supraharmonic_aggregation\core\marks.py
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"""Source mark models and spatial population utilities."""
+
+from __future__ import annotations
+
+import math
+import random
+from dataclasses import dataclass
+from typing import Iterable
+
+from .aggregator import Source
+
+
+@dataclass(slots=True)
+class SourceMark:
+    """Electrical mark for one source."""
+
+    amplitude_a: float
+    phase_rad: float
+    admittance_s: float
+
+
+def _sample_poisson(lam: float, rng: random.Random) -> int:
+    """Sample from Poisson distribution using Knuth algorithm."""
+    if lam <= 0:
+        return 0
+    lam = min(lam, 500.0)
+    limit = math.exp(-lam)
+    k = 0
+    p = 1.0
+    while p > limit:
+        k += 1
+        p *= rng.random()
+    return max(k - 1, 0)
+
+
+def _sample_mark(
+    rng: random.Random,
+    coherence: float,
+    base_current_a: float,
+    admittance_s: float,
+    common_phase: float,
+) -> SourceMark:
+    """Sample one source mark with coherence-controlled phase."""
+    residual = rng.uniform(0.0, 2.0 * math.pi)
+    phase = coherence * common_phase + (1.0 - coherence) * residual
+    amplitude = max(base_current_a * (0.7 + 0.6 * rng.random()), 1e-6)
+    return SourceMark(amplitude_a=amplitude, phase_rad=phase, admittance_s=admittance_s)
+
+
+def generate_source_population(
+    density: float,
+    region_radius_m: float,
+    coherence: float,
+    base_current_a: float,
+    admittance_s: float,
+    rng: random.Random,
+) -> list[Source]:
+    """Generate a PPP-like source set in a bounded circular region."""
+    area_km2 = math.pi * (region_radius_m / 1000.0) ** 2
+    n_sources = _sample_poisson(density * area_km2, rng)
+    common_phase = rng.uniform(0.0, 2.0 * math.pi)
+    population: list[Source] = []
+    for _ in range(n_sources):
+        distance = region_radius_m * math.sqrt(rng.random())
+        mark = _sample_mark(rng, coherence, base_current_a, admittance_s, common_phase)
+        population.append(Source(distance_m=distance, mark=mark))
+    return population
+
+
+def amplitudes(population: Iterable[Source]) -> list[float]:
+    """Extract source amplitudes."""
+    return [source.mark.amplitude_a for source in population]
+
+FILE: src\supraharmonic_aggregation\governance\__init__.py
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"""Governance helpers."""
+
+from .manifest import export_run_manifest
+
+__all__ = ["export_run_manifest"]
+
+FILE: src\supraharmonic_aggregation\governance\manifest.py
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"""Run manifest export utilities."""
+
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+from ..models import RunBundle
+
+
+def export_run_manifest(run: RunBundle, path: str) -> str:
+    """Write run manifest to disk and return target path."""
+    target = Path(path)
+    target.parent.mkdir(parents=True, exist_ok=True)
+    target.write_text(json.dumps(run.to_dict(), indent=2), encoding="utf-8")
+    return str(target)
+
+FILE: src\supraharmonic_aggregation\logging_config.py
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"""Structured log writing helpers."""
+
+from __future__ import annotations
+
+import json
+import uuid
+from dataclasses import dataclass, field
+from datetime import datetime, timezone
+from pathlib import Path
+from typing import Any
+
+
+def _utc_now() -> str:
+    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+@dataclass(slots=True)
+class StructuredLogger:
+    """Persist runtime and statistics logs in JSON/JSONL format."""
+
+    run_id: str
+    log_dir: Path
+    run_dir: Path = field(init=False)
+    stats_dir: Path = field(init=False)
+    run_log_path: Path = field(init=False)
+    stats_log_path: Path = field(init=False)
+
+    def __post_init__(self) -> None:
+        self.run_dir = self.log_dir / "runs"
+        self.stats_dir = self.log_dir / "stats"
+        self.run_dir.mkdir(parents=True, exist_ok=True)
+        self.stats_dir.mkdir(parents=True, exist_ok=True)
+        self.run_log_path = self.run_dir / f"{self.run_id}.jsonl"
+        self.stats_log_path = self.stats_dir / f"{self.run_id}.json"
+
+    def log_event(
+        self,
+        stage: str,
+        event: str,
+        status: str,
+        duration_ms: int,
+        component: str,
+        message: str,
+        trace_id: str | None = None,
+    ) -> None:
+        """Append one runtime event record."""
+        payload = {
+            "run_id": self.run_id,
+            "timestamp_utc": _utc_now(),
+            "stage": stage,
+            "event": event,
+            "status": status,
+            "duration_ms": duration_ms,
+            "component": component,
+            "message": message,
+            "trace_id": trace_id or str(uuid.uuid4()),
+        }
+        with self.run_log_path.open("a", encoding="utf-8") as handle:
+            handle.write(json.dumps(payload) + "\n")
+
+    def log_statistics(self, payload: dict[str, Any]) -> None:
+        """Write statistics payload for this run."""
+        envelope = {"run_id": self.run_id, "timestamp_utc": _utc_now(), "statistics": payload}
+        self.stats_log_path.write_text(json.dumps(envelope, indent=2), encoding="utf-8")
+
+
+def create_logger(run_id: str, log_dir: str) -> StructuredLogger:
+    """Create a configured structured logger."""
+    return StructuredLogger(run_id=run_id, log_dir=Path(log_dir))
+
+FILE: src\supraharmonic_aggregation\models.py
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"""Shared typed data models used across the package."""
+
+from __future__ import annotations
+
+from dataclasses import asdict, dataclass, field
+from typing import Any
+
+
+StatisticsFrame = list[dict[str, float | int | str]]
+
+
+@dataclass(slots=True)
+class TailMetrics:
+    """Tail metrics for magnitude distributions."""
+
+    percentiles: dict[int, float]
+    exceedance_probability: float | None
+    sample_size: int
+
+
+@dataclass(slots=True)
+class IntegrabilityReport:
+    """Result of boundedness/integrability checks."""
+
+    finite_domain_ok: bool
+    asymptotic_domain_ok: bool
+    details: str
+
+
+@dataclass(slots=True)
+class MonteCarloResult:
+    """Monte Carlo simulation outputs."""
+
+    per_frequency_samples: dict[str, list[float]]
+    statistics_frame: StatisticsFrame
+
+
+@dataclass(slots=True)
+class BenchmarkComparison:
+    """Analytical vs benchmark comparison results."""
+
+    rows: StatisticsFrame
+
+
+@dataclass(slots=True)
+class RunBundle:
+    """Container returned by end-to-end analysis workflows."""
+
+    run_id: str
+    config: dict[str, Any]
+    analytical: StatisticsFrame
+    monte_carlo: MonteCarloResult
+    benchmark: BenchmarkComparison
+    artifact_paths: list[str] = field(default_factory=list)
+    run_manifest_path: str | None = None
+    log_path: str | None = None
+    stats_log_path: str | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        """Serialize this run bundle to a JSON-compatible dict."""
+        payload = asdict(self)
+        payload["monte_carlo"] = {
+            "per_frequency_samples": self.monte_carlo.per_frequency_samples,
+            "statistics_frame": self.monte_carlo.statistics_frame,
+        }
+        payload["benchmark"] = {"rows": self.benchmark.rows}
+        return payload
+
+FILE: src\supraharmonic_aggregation\simulation\__init__.py
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"""Simulation utilities."""
+
+from .monte_carlo import MonteCarloRunner
+
+__all__ = ["MonteCarloRunner"]
+
+FILE: src\supraharmonic_aggregation\simulation\monte_carlo.py
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+"""Monte Carlo runner for aggregation experiments."""
+
+from __future__ import annotations
+
+import random
+
+from ..analysis.tail import compute_tail_metrics
+from ..config import AnalysisConfig
+from ..core.aggregator import SupraharmonicAggregator
+from ..core.kernel import ExponentialKernel
+from ..core.marks import generate_source_population
+from ..models import MonteCarloResult
+
+
+class MonteCarloRunner:
+    """Run stochastic simulation with deterministic seed controls."""
+
+    def __init__(self, config: AnalysisConfig, seed: int | None = None) -> None:
+        self.config = config
+        self.seed = config.seed if seed is None else seed
+
+    def run(self, n_samples: int) -> MonteCarloResult:
+        """Run Monte Carlo simulations and summarize per-frequency outputs."""
+        self.config.validate()
+        rng = random.Random(self.seed)
+        kernel = ExponentialKernel(alpha=self.config.kernel_alpha, resonance_scale=self.config.resonance_scale)
+        aggregator = SupraharmonicAggregator(kernel)
+        per_frequency_samples: dict[str, list[float]] = {
+            str(freq): [] for freq in self.config.frequencies_khz
+        }
+
+        for _ in range(n_samples):
+            population = generate_source_population(
+                density=self.config.density,
+                region_radius_m=self.config.region_radius_m,
+                coherence=self.config.coherence,
+                base_current_a=self.config.base_current_a,
+                admittance_s=self.config.admittance_s,
+                rng=rng,
+            )
+            for frequency in self.config.frequencies_khz:
+                value = aggregator.aggregate_magnitude(frequency, population)
+                per_frequency_samples[str(frequency)].append(value)
+
+        statistics_frame: list[dict[str, float | int | str]] = []
+        for frequency in self.config.frequencies_khz:
+            key = str(frequency)
+            values = per_frequency_samples[key]
+            tail = compute_tail_metrics(values, threshold=self.config.threshold)
+            mean_abs_v = sum(values) / len(values) if values else 0.0
+            var_v = (
+                sum((value - mean_abs_v) ** 2 for value in values) / len(values)
+                if values
+                else 0.0
+            )
+            statistics_frame.append(
+                {
+                    "frequency_khz": frequency,
+                    "mean_abs_v": mean_abs_v,
+                    "var_v": var_v,
+                    "rms_abs_v": (mean_abs_v**2 + var_v) ** 0.5,
+                    "p90_abs_v": tail.percentiles.get(90, 0.0),
+                    "p95_abs_v": tail.percentiles.get(95, 0.0),
+                    "p99_abs_v": tail.percentiles.get(99, 0.0),
+                    "exceedance_probability": tail.exceedance_probability or 0.0,
+                    "sample_size": tail.sample_size,
+                }
+            )
+
+        return MonteCarloResult(
+            per_frequency_samples=per_frequency_samples,
+            statistics_frame=statistics_frame,
+        )
+
+END OF REPORT
+================================================================================

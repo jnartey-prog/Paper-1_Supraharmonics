@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import random
 
-from ..analysis.tail import compute_tail_metrics
+from ..analysis.tail import adaptive_threshold, compute_tail_metrics
 from ..config import AnalysisConfig
 from ..core.aggregator import SupraharmonicAggregator
 from ..core.kernel import ExponentialKernel
@@ -23,7 +23,9 @@ class MonteCarloRunner:
         """Run Monte Carlo simulations and summarize per-frequency outputs."""
         self.config.validate()
         rng = random.Random(self.seed)
-        kernel = ExponentialKernel(alpha=self.config.kernel_alpha, resonance_scale=self.config.resonance_scale)
+        kernel = ExponentialKernel(
+            alpha=self.config.kernel_alpha, resonance_scale=self.config.resonance_scale
+        )
         aggregator = SupraharmonicAggregator(kernel)
         per_frequency_samples: dict[str, list[float]] = {
             str(freq): [] for freq in self.config.frequencies_khz
@@ -46,23 +48,28 @@ class MonteCarloRunner:
         for frequency in self.config.frequencies_khz:
             key = str(frequency)
             values = per_frequency_samples[key]
-            tail = compute_tail_metrics(values, threshold=self.config.threshold)
             mean_abs_v = sum(values) / len(values) if values else 0.0
             var_v = (
-                sum((value - mean_abs_v) ** 2 for value in values) / len(values)
-                if values
-                else 0.0
+                sum((value - mean_abs_v) ** 2 for value in values) / len(values) if values else 0.0
             )
+            rms_abs_v = (mean_abs_v**2 + var_v) ** 0.5
+            tail_threshold = adaptive_threshold(
+                floor_threshold=self.config.threshold,
+                rms_abs_v=rms_abs_v,
+                multiplier=self.config.threshold_rms_multiplier,
+            )
+            tail = compute_tail_metrics(values, threshold=tail_threshold)
             statistics_frame.append(
                 {
                     "frequency_khz": frequency,
                     "mean_abs_v": mean_abs_v,
                     "var_v": var_v,
-                    "rms_abs_v": (mean_abs_v**2 + var_v) ** 0.5,
+                    "rms_abs_v": rms_abs_v,
                     "p90_abs_v": tail.percentiles.get(90, 0.0),
                     "p95_abs_v": tail.percentiles.get(95, 0.0),
                     "p99_abs_v": tail.percentiles.get(99, 0.0),
                     "exceedance_probability": tail.exceedance_probability or 0.0,
+                    "exceedance_threshold_v": tail_threshold,
                     "sample_size": tail.sample_size,
                 }
             )

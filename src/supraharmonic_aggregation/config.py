@@ -20,7 +20,13 @@ class AnalysisConfig:
     kernel_alpha: float = 0.8
     resonance_scale: float = 0.05
     threshold: float = 1.0
+    threshold_rms_multiplier: float = 1.5
     monte_carlo_samples: int = 128
+    analytical_proxy_samples: int = 96
+    measurement_noise_cv: float = 0.03
+    measurement_bias: float = 0.0
+    review_ready_min_samples: int = 2048
+    review_ready_frequency_step_khz: float = 1.0
     seed: int = 7
     log_dir: str = "logs"
     output_dir: str = "manuscript/artifacts"
@@ -41,6 +47,20 @@ class AnalysisConfig:
             raise ValueError("monte_carlo_samples must be positive.")
         if self.kernel_alpha <= 0:
             raise ValueError("kernel_alpha must be positive.")
+        if self.threshold <= 0:
+            raise ValueError("threshold must be positive.")
+        if self.threshold_rms_multiplier <= 0:
+            raise ValueError("threshold_rms_multiplier must be positive.")
+        if self.analytical_proxy_samples <= 0:
+            raise ValueError("analytical_proxy_samples must be positive.")
+        if self.measurement_noise_cv < 0:
+            raise ValueError("measurement_noise_cv must be non-negative.")
+        if abs(self.measurement_bias) > 0.5:
+            raise ValueError("measurement_bias magnitude must be <= 0.5.")
+        if self.review_ready_min_samples <= 0:
+            raise ValueError("review_ready_min_samples must be positive.")
+        if self.review_ready_frequency_step_khz <= 0:
+            raise ValueError("review_ready_frequency_step_khz must be positive.")
 
     def to_dict(self) -> dict[str, object]:
         """Return a dict representation."""

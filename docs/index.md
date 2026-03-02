@@ -8,4 +8,4 @@ This package provides analytical and simulation-based supraharmonic aggregation 
 - CLI: `supraharmonic-pipeline`
 
 ## Reproducibility
-See `REPRODUCIBILITY.md` for deterministic run instructions.
+See `REPRODUCIBILITY.md` for deterministic run instructions and `RELEASE_CHECKLIST.md` for paper release controls.

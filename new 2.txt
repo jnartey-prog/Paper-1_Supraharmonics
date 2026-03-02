@@ -1,0 +1,421 @@
+Title: Analytical Framework for Supraharmonic Aggregation Under Spatial Uncertainty Using Point Process Theory
+
+Abstract
+Supraharmonic (2-150 kHz) voltage distortion in low-voltage networks arises from spatial aggregation of converter-interfaced electric vehicle chargers and is poorly captured by deterministic models that fix source count and location. We develop a marked Poisson point process framework in which active charger locations form a random spatial field, and each device carries an electrical mark capturing the frequency-dependent magnitude and phase of the injected current. The point-of-common-coupling voltage is represented as a marked shot-noise integral over the service area; each contribution is filtered by a transfer-impedance kernel with a small-signal absorption/loading term and a numerical safeguard against near-singular amplification. Using Campbell’s theorem and the probability generating functional, we obtain closed-form expressions for the mean and variance, and a semi-analytical characteristic function, evaluated on a 1 kHz grid. Planning risk metrics (exceedance probabilities and high percentiles) are computed using a complex-Gaussian surrogate, validated against Monte Carlo CCDFs across the analysis band: Rayleigh envelopes under phase asynchrony and Rice envelopes under partial coherence. In the asynchronous regime, RMS scales with the square root of the active density; at 30 kHz, a coherence level of 0.2 increases RMS by about 67%. Across three linear time-invariant feeder archetypes (urban, suburban, rural), mean RMS relative errors are 2.0 to 3.4 per cent, and the worst-case per-frequency RMS deviation is 15.6 per cent; upper-tail metrics show greater dispersion. No field measurements are used; results rely on synthetic marks and archetypal network kernels with bounded-domain regularisation. The framework targets population-level screening of hosting capacity and does not model multi-PCC coupling, site-specific compliance verification, or nonlinear converter interactions.
+Keywords: Supraharmonics; Power quality; Electric vehicle supply equipment; Low-voltage distribution feeders; Transfer impedance; Marked Poisson point process; Shot-noise field; Hosting-capacity risk assessment
+1. Introduction
+1.1 Supraharmonics (2-150 kHz) as an Emerging Power-Quality Problem
+The accelerating deployment of switched-mode power supplies, grid-connected inverters, electric vehicle (EV) chargers, battery energy storage systems, and LED lighting drivers is fundamentally reshaping the electromagnetic environment of low-voltage (LV) distribution networks. Unlike conventional power-electronic loads, which introduce distortion predominantly within the classical harmonic range (integer multiples of the 50/60 Hz fundamental up to approximately 2 kHz), modern converter-interfaced devices emit conducted voltage and current disturbances at substantially higher frequencies. These components, occupying the interval from 2 kHz to 150 kHz, are now widely designated in the power-quality literature as supraharmonics (SH), a term that demarcates them from classical harmonics below and radiated electromagnetic interference (EMI) bands above 150 kHz (Alfalahi et al., 2021; De Falco & Varilone, 2021). The characteristically switching-related and wideband nature of these emissions distinguishes them from integer-multiple harmonic distortion and necessitates distinct analytical treatment (Peiris et al., 2025; Sandrolini & Mariscotti, 2021).
+The lower boundary of the supraharmonic band at 2 kHz marks the practical transition point beyond which classical harmonic analysis methods typically based on discrete Fourier transform (DFT) windows synchronized to the power frequency can no longer be applied without significant accuracy penalties (Li et al., 2023; Sandrolini & Mariscotti, 2021). At these elevated frequencies, emissions exhibit characteristically impulsive, time-varying, and wideband behavior tied to converter switching events rather than to integer relationships with the mains fundamental. The upper boundary at 150 kHz aligns with the lower limit of conducted-emission regulatory practice, reflecting an internationally recognized demarcation between conducted power-quality phenomena and radiated EMI (Lodetti et al., 2023; Mariscotti & Mingotti, 2024a). Within this 2–150 kHz interval, intentional power-line communication (PLC) signals also operate, creating a regime in which unintentional switching-related emissions and deliberate communication carriers coexist and potentially interfere (Mariscotti & Mingotti, 2024b; Wasowski et al., 2021).
+The grid-level consequences of supraharmonic distortion span multiple documented mechanisms. Network topology and feeder geometry determine frequency-selective resonance conditions that can amplify SH voltage levels far beyond what individual source emissions would suggest in isolation (Letha et al., 2021; Sutaria & Rönnberg, 2023). Frequency-dependent ohmic and dielectric losses in transformers, cables, and insulation are analytically and empirically linked to elevated SH content, raising concerns for thermal aging and long-term asset reliability (Mariscotti & Mingotti, 2024b). Bidirectional EV charging stations modify network impedance at supraharmonic frequencies, introducing new resonance points that alter the propagation characteristics of the connected system (Grasel et al., 2022). Additionally, conventional instrument transformers and power-quality meters exhibit frequency-dependent ratio and phase errors across the supraharmonic band, with calibration studies demonstrating that measurement uncertainty grows substantially above 10 kHz (Rom et al., 2025). These mechanisms establish that supraharmonic distortion at the point of common coupling (PCC) depends not only on individual device emissions but on the interaction of spatially distributed, randomly active sources with a frequency-selective network, a problem that deterministic, feeder-specific models are structurally ill-suited to generalize.
+1.2 EV Chargers and Converter-Interfaced Loads as Dominant Stochastic Sources
+Among the converter-interfaced technologies now prevalent in low-voltage distribution networks, electric vehicle supply equipment (EVSE) and grid-connected photovoltaic (PV) inverters are the most consistently documented dominant contributors to supraharmonic emissions in the 2-150 kHz band. Field measurements of bidirectional V2G EV charging stations demonstrate that such equipment produces both narrowband and wideband spectral components and that a single high-power charger unit meaningfully modifies local high-frequency network impedance, introducing new resonance conditions (Grasel et al., 2022). Fast-charging installations comprising multiple parallel units confirm that aggregated 2–150 kHz current emissions grow sub-linearly with charger count due to diversity and impedance-absorption effects (Slangen et al., 2023). PV inverters are similarly implicated: a documented U.S. case study establishes that inverter switching-frequency components couple through grounding and neutral paths, producing interference for adjacent customers in the supraharmonic band (Singh et al., 2023), while medium-voltage network analyses link PV- and wind-connected feeders to time-varying resonance-driven amplification (Letha et al., 2021).
+What fundamentally elevates EVSE and comparable converter-interfaced loads to the status of stochastic sources is the marked variability of their emission characteristics across operating conditions and device populations. Supraharmonic current spectra from EV fast-charging stations are non-stationary: emission magnitudes and spectral patterns shift with charging stage, power level, and network background conditions (Slangen et al., 2023). BESS-integrated fast chargers exhibit distinct spectral behavior across five classified operating stages (Giri & Rönnberg, 2025), and UPS systems in data-center environments demonstrate mode-dependent emissions with non-linear load dependency (Sutaria & Rönnberg, 2023). LED and CFL drivers contribute supraharmonic emissions that vary measurably with supply voltage level, though their grid-level impact is more localized than EVSE or PV systems (Frydlewicz et al., 2024). Across device classes, dependence on operating state and control mode makes both the number of simultaneously active sources and their locations within a service region inherently random. This variability requires a probabilistic and spatially resolved treatment of supraharmonic aggregation at the PCC.
+1.3 Why Supraharmonic Aggregation Is Inherently Statistical
+The voltage distortion observed at the point of common coupling (PCC) of a low-voltage feeder is not the arithmetic sum of individual converter emission spectra but the outcome of a complex statistical superposition governed by three interacting mechanisms: phase asynchrony, partial cancellation, and frequency-selective impedance weighting. Modern pulse-width modulated converters derive their switching instants from independent local oscillators or digital control loops that are unsynchronized with one another or with the power frequency. As a result, the relative phases of supraharmonic current injections at a given frequency are effectively random across the source population, reflecting phase asynchrony. Monte Carlo phase-randomization studies of multiple converter sources modeled as Norton equivalents show that this dispersion shifts the aggregate emission toward root-sum-square scaling rather than the linear worst-case bound, with the reduction becoming more pronounced as the number of sources increases (Mariscotti et al., 2022). Partial cancellation, understood as the reduction of aggregate magnitude below simple arithmetic summation due to destructive phasor interaction, has been confirmed in field measurements of four co-located 350 kW fast-charging stations. The aggregated supraharmonic current increases sub-linearly with the number of active chargers, and measured diversity factors show that arithmetic summation consistently overestimates the true aggregate (Slangen et al., 2023). Additional temporal variability from switching-frequency drift and operating-point changes promotes further phase decorrelation over observation windows, reinforcing sub-linear aggregation (Frigo & Braun, 2022).
+Beyond phase statistics, network impedance introduces a second layer of complexity through frequency-selective amplification and absorption. Each feeder exhibits a distinct impedance-versus-frequency profile, with resonance peaks at specific frequencies where aggregated current injections produce substantially amplified PCC voltage distortion, while off-resonance contributions are proportionally damped (Letha et al., 2021). In addition, the input admittance of connected converters can absorb supraharmonic currents from nearby sources, so aggregate levels do not necessarily increase steadily as more units are added. This non-monotonic behaviour has been observed in measurements of EV fast-charging aggregation (Slangen et al., 2023). The interaction between random source positions, random emission phases, and a topology-dependent transfer impedance function therefore makes PCC voltage distortion a genuinely random quantity whose distribution cannot be characterized without a probabilistic framework integrating all three variability sources simultaneously.
+
+1.4 Spatial Uncertainty and Limitations of Feeder-Specific Simulations for Generalisation
+The locations at which converter-interfaced loads connect to a low-voltage feeder are, from the perspective of a network planner assessing aggregate supraharmonic distortion, fundamentally uncertain. Individual EV chargers, PV inverters, and similar devices are deployed according to socio-economic, urban, and behavioral processes that are neither deterministic nor fully observable at the time of planning. This spatial uncertainty encompasses four distinct dimensions: the unknown geographical positions of individual devices along feeder branches; the uncertain number of simultaneously active sources at any instant; the unknown aggregate density of converter populations within a service region; and the feeder topology and cable parameters, which are themselves subject to measurement and model uncertainty (De Falco & Varilone, 2021). Medium-voltage propagation studies demonstrate that transfer impedance magnitude and resonance characteristics differ markedly across feeders with nominally similar configurations, meaning identical emission sources produce substantially different PCC voltage distortions depending solely on connection location (Letha et al., 2021). Aggregation modeling for EV fast-charging installations confirms that sub-linear diversity effects depend critically on the specific combination and spatial separation of active sources, rather than on source count alone (Slangen et al., 2023). These observations establish that spatial placement is a primary determinant of aggregate distortion outcomes, not a secondary modeling detail.
+The dominant methodological response in the extant supraharmonic literature is to conduct feeder-specific time-domain or harmonic-domain simulations calibrated to a known, fixed topology. While such simulations achieve high fidelity for the specific feeder analyzed, they exhibit four well-documented limitations that undermine generalisability. First, they require comprehensive frequency-dependent impedance spectra and Norton-equivalent device characterizations that are rarely available in operational networks; missing impedance data substantially alters resonance predictions (Letha et al., 2021; Mariscotti et al., 2022). Second, strong topology dependence means conclusions from one feeder cannot be extrapolated to another without complete re-modeling: an eight-feeder medium-voltage study demonstrated that each feeder exhibits a distinct amplification profile bearing no simple relationship to network length or voltage level (Letha et al., 2021). Third, operating-mode sensitivity further constrains transferability; data-center measurements confirm that UPS mode changes the propagation pattern entirely, invalidating a model calibrated to a single operating state (Sutaria & Rönnberg, 2023). Fourth, wideband EMT simulations across 2–150 kHz carry substantial computational cost, limiting practical scenario coverage (Frigo & Braun, 2022). Crucially, even Monte Carlo aggregation frameworks that randomize emission phases still treat source locations deterministically or implicitly, leaving spatial deployment uncertainty unaddressed (Mariscotti et al., 2022; Slangen et al., 2023). Addressing this gap calls for models that represent source locations explicitly as a random field, which motivates the application of spatial point process theory to supraharmonic aggregation in the present work.
+1.5 Research Gap, Contributions, and Scope
+The analytical tools applied here, including marked shot-noise formulations, moment derivations for marked Poisson point processes, and Rayleigh and Rice envelope approximations based on complex-Gaussian models, are drawn from stochastic geometry theory developed in wireless communications (Afshang & Dhillon, 2016; Ganti & Haenggi, 2009). Against the limitations identified in Section 1.4, this paper makes four principal contributions.
+First, it formulates aggregate supraharmonic PCC voltage as a marked-PPP shot-noise functional with a feeder transfer-impedance kernel and an absorption/loading term, yielding closed-form and semi-analytical expressions for mean and second-order statistics (including RMS) via Campbell's theorem and the PGFL. Planning metrics such as exceedance probabilities and frequency-resolved percentiles are obtained through Rayleigh/Rice envelope surrogates and are validated against Monte Carlo CCDFs across 2-150 kHz.
+Second, it derives analytical density-scaling laws, establishing √λ RMS scaling in the phase-asynchronous regime and quantifying departures under partial phase coherence (Mariscotti et al., 2022; Slangen et al., 2023).
+Third, it characterises sensitivity to spatial deployment structure by comparing homogeneous PPP, inhomogeneous intensity, clustered, and repulsive processes under matched mean density, and shows that tail risk metrics can shift materially under clustering relative to the PPP baseline (e.g., P99 at 30 kHz changes by approximately ± 20% in the benchmarked scenarios).
+Fourth, it demonstrates numerical consistency against three RLGC-parameterised synthetic feeder archetypes (urban, suburban, rural). In this internal benchmark, per-feeder mean RMS relative errors are 2.0%, 2.1%, and 3.4% (Feeders A-C), with an overall mean of 2.5% and a 90th-percentile RMS error of 4.4% (Table 6, Figure 7). A worked hosting-capacity screening example illustrates exceedance-based inversion against representative low-voltage guidance values.
+The scope is intentionally bounded. The framework assumes per-frequency LTI small-signal superposition and quasi-stationary i.i.d. marks, and it targets transformer-level screening rather than site-specific compliance verification. Validation is performed on synthetic marks and synthetic feeder archetypes; no field measurement dataset is used.
+1.6 Paper Organisation
+The remainder of this paper is organized as follows. Section 2 develops the complete analytical framework: it defines the PCC target quantity and network-source abstraction, introduces the spatial point process deployment model and its uncertainty regimes, specifies the electrical mark model for converter emissions, formulates the propagation kernel, and derives the aggregate PCC voltage as a marked shot-noise functional from which closed-form RMS, percentile, and exceedance statistics follow via Campbell's theorem. Section 3 presents results in seven subsections, progressing from baseline homogeneous PPP statistics across 2-150 kHz  through density-scaling characterization, spatial-process sensitivity under clustered, inhomogeneous, and repulsive deployments, phase-coherence effects, and feeder-level benchmark validation against three synthetic archetype feeders. Section 4 interprets the findings across five subsections: mechanistic explanation of resonance-dominated outcomes; engineering implications for probabilistic hosting capacity and IEC 61000-2-2 standards alignment, including the allowable-density screening chart; the domain of validity of the LTI and source-independence assumptions; practitioner guidance on which spatial uncertainty sources most affect planning decisions; and priority research extensions. Section 5 states conclusions. Section 6 provides data and code availability statements together with a reproducibility checklist covering Monte Carlo sample sizes, convergence diagnostics, and random seed strategy.
+
+2. Analytical Framework and Methods
+2.1 Problem Definition and Target Quantity at the PCC
+2.1.1 PCC definition; frequency-by-frequency analysis quantity
+The analytical problem was formulated as the statistical characterisation of supraharmonic voltage distortion at a transformer-level Point of Common Coupling (PCC) induced by a spatially distributed population of converter-interfaced sources. The PCC was defined as the low-voltage transformer bus at which aggregated distortion is assessed for compatibility, planning, and benchmarking purposes. The analysis was conducted in the frequency domain over the supraharmonic band f∈[2,150]" kHz" , discretised in the validation protocol as a uniform grid F={f_min,f_min+Δf,…,f_max }, with f_min=2" kHz" , f_max=150" kHz" , and Δf=1" kHz" , consistent with the reviewer-grade validation configuration. Under the linear time-invariant (LTI) small-signal abstraction, each frequency was treated independently. Let Φ={x_i }_(i=1)^N⊂R^2 denote the spatial point process of active chargers within a service region D⊂R^2, with random cardinality N. To each point x_i  was attached a complex electrical mark M_i (f)=I_i (f) e^(jϕ_i (f) ), representing the Norton current injection at frequency f, potentially incorporating internal admittance terms.
+Let Z_tr (f,d_i)denote the complex transfer impedance between a source located at radial distance d_i=∥x_i-x_PCC∥and the PCC. The complex voltage contribution of the source i at frequency fwas written as
+V_i (f)=(Z_tr (f,d_i))/(1+Y_i (f)Z_tr (f,d_i)) " " M_i (f),
+where Y_i (f)denotes the source admittance, included to capture absorption and small-signal loading. The aggregate complex voltage at the PCC was therefore defined as the marked shot-noise functional
+V_agg (f)=∑_(i=1)^N▒V_i (f)=∑_(x_i∈Φ)▒(Z_tr (f,d_i))/(1+Y_i (f)Z_tr (f,d_i)) " " M_i (f).
+The fundamental analytical target was the probability law of V_agg (f), conditional on deployment intensity, region geometry, kernel parametrisation, and electrical mark statistics. First- and second-order moments and tail functionals were required at each f, forming the basis for planning-relevant metrics. The per-frequency treatment was consistent with the computational validation pipeline, in which analytical statistics were compared against Monte Carlo realisations and an independent feeder benchmark on the same discrete grid. No cross-frequency coupling was assumed; the problem was thus decomposed into a family of statistically independent scalar complex-valued aggregation problems indexed by f.
+
+2.1.2 Transformer-level aggregation metric(s): complex phasor, magnitude, band summaries
+Three complementary transformer-level aggregation metrics were defined.
+(i) Complex phasor statistic.
+The primary object was the complex random variable V_agg (f). Its expectation and variance were written as
+μ_V (f)=E[V_agg (f)],σ_V^2 (f)=E[∣V_agg (f)-μ_V (f)∣^2].
+Under phase diversity (uniformly distributed ϕ_i), it was demonstrated analytically that μ_V (f)≈0, and aggregation was governed primarily by second-order statistics. Partial coherence was represented via a coherence parameter κ∈[0,1], producing a residual mean term proportional to κλ, where λdenotes active charger density.
+
+(ii) Magnitude-based metrics.
+For planning purposes, magnitude statistics were required. The root-mean-square (RMS) voltage magnitude was defined as
+V_RMS (f)=√(E" " [∣V_agg (f)∣^2 ] ).
+In the incoherent regime (independent phases), the canonical scaling law V_RMS (f)∝√λ  was derived for bounded service regions, whereas coherent limits exhibited O(λ) growth. Percentile metrics were defined as Q_p (f)=inf⁡{v∈R_+:P(∣V_agg (f)∣≤v)≥p}, with emphasis on p∈{0.90,0.95,0.99}, consistent with the validation scorecard, which explicitly tracked RMS and 95th-percentile relative errors against synthetic and independent benchmarks. Exceedance probabilities relative to compatibility-style thresholds τ_V (f)were written as P_exc (f;τ_V)=P(∣V_agg (f)∣>τ_V (f)).
+
+(iii) Band-limited summaries.
+
+For reporting across frequency bands, band-aggregated RMS was defined over a set B⊂Fas
+V_band=(1/(∣B∣) ∑_(f∈B)▒V_RMS^2 (f))^(1/2),
+
+or, alternatively, as a worst-case percentile envelope
+
+Q_p^band=(max⁡)┬(f∈B) Q_p (f).
+These metrics directly aligned with the automated validation gates implemented in the benchmarking routine, in which per-frequency RMS and percentile discrepancies were constrained below strict tolerances and aggregated into a reviewer-grade scorecard.
+Accordingly, Section 2.1 established the precise stochastic object of interest, V_agg (f) and the transformer-level scalar summaries through which spatial uncertainty, electrical diversity, and propagation filtering were quantitatively translated into engineering-relevant distortion measures.
+2.2 Network-Source Abstraction and Modelling Assumptions
+The analytical framework was constructed upon a hierarchy of abstractions that rendered the aggregation problem mathematically tractable while retaining physical interpretability. The assumptions were explicitly aligned with the computational validation pipeline executed over the discrete frequency grid f∈[2,150]" " kHzwith 1" " kHz resolution and multi-seed robustness checks, as implemented in the reviewer-grade validation configuration. The abstraction separated (i) network propagation, (ii) spatial deployment, and (iii) electrical source behaviour, and specified the structural conditions under which statistical characterisation is well posed.
+2.2.1 LTI small-signal superposition; quasi-stationarity window
+The network was modelled as a linear time-invariant (LTI) system at each supraharmonic frequency. Let fdenote a fixed frequency in the analysis grid and ω=2πf. The transformer-level PCC voltage response to a complex current injection I(f)at location xwas represented by a transfer impedance kernel Z_tr (f,d), where ddenotes electrical or geometric distance to the PCC. Under the small-signal approximation, superposition was assumed to hold. For a marked spatial configuration Φ={(x_i,M_i (f))}_(i=1)^N, the aggregate complex voltage was expressed as
+V_agg (f)=∑_(i=1)^N▒(Z_tr (f,d_i))/(1+Y_i (f)Z_tr (f,d_i)) " " M_i (f),
+where Y_i (f)denotes the small-signal input admittance of source i. The denominator captures first-order absorption effects and ensures that local loading modifies the effective injection. The small-signal condition requires ∣V_agg (f)∣≪V_nom, so that nonlinear control saturation and impedance-dependent emission shifts remain negligible. Using the reported baseline results at 2 kHz, RMS ≈ 1.86 V and P99 ≈ 5.92 V correspond to RMS/V_nom ≈ 0.8% and P99/V_nom ≈ 2.6% for V_nom=230V. Even at the highest evaluated density, the ratio remains below approximately 3%. Under the derived √λ scaling law, exceeding a 5% margin would require roughly a fourfold density increase beyond the evaluated range, indicating that the small-signal condition holds within the studied deployment intensities. Quasi-stationarity was assumed over the observation window T, requiring that source activity, mark distributions, and spatial intensity remain statistically invariant over T. Per-frequency decoupling implies that cross-frequency coupling and modulation interactions are neglected; each frequency bin is analysed independently, consistent with the benchmarking procedure.
+2.2.2 Independence structure; what breaks if assumptions fail
+A central modelling assumption concerned the independence structure of spatial and electrical randomness. The baseline model assumed:
+	A spatial point process Φindependent of electrical marks.
+	Independent and identically distributed (i.i.d.) marks {M_i (f),Y_i (f)}conditional on frequency.
+	Phase asynchrony represented by independent phase angles ϕ_i (f), possibly modulated by a coherence parameter.
+Formally, for i≠j, M_i (f)⊥⊥M_j (f),Φ⊥⊥{M_i (f)}.
+Under these assumptions, the first and second moments admit closed-form expressions via Campbell’s theorem and the probability generating functional (PGFL). In particular, for phase-uniform marks, E[V_agg (f)]=0, and
+E" " [∣V_agg (f)∣^2 ]=λ∫_D▒E" "  [〖∣(Z_tr (f,d))/(1+Y(f)Z_tr (f,d)) M(f)∣〗^2 ]dx,
+where λ denotes active source density. If independence fails, several structural consequences arise:
+	Phase correlation: If ϕ_i (f)are correlated, a residual coherent mean term appears, scaling as O(λ), modifying RMS scaling laws.
+	Mark–location dependence: If larger emissions cluster spatially, the integral above becomes biased toward high-impedance regions, inflating tail probabilities.
+	Activity correlation: Correlated switching or demand response introduces covariance terms
+∑_(i≠j)▒〖E[〗 V_i (f)(V_j (f)) ‾],
+which are zero under independence but non-negligible under synchronisation. Such departures invalidate the cancellation mechanism that underpins √λ scaling in the incoherent regime. The robustness module and multi-seed validation implemented in the benchmarking workflow were designed to detect deviations from expected cancellation and variance behaviour.
+2.2.3 Well-posedness conditions (bounded domain vs asymptotic regime)
+For the aggregation functional to be mathematically well defined, integrability conditions on the propagation kernel and mark distributions must hold.
+Let Ddenote the service region. In the bounded-domain regime, D is a disc of radius R, and the total number of sources satisfies E[N]=λπR^2<∞. In this case, finiteness of moments requires only that E[∣M(f)∣^2]<∞, and that Z_tr (f,d)be bounded over d∈[0,R]. In contrast, in the infinite-plane asymptotic regime, convergence requires
+∫_(R^2)▒〖∣Z_tr (f,∥x∥)∣〗^2  dx<∞.
+This condition imposes a decay requirement on the kernel. For radially symmetric kernels, this reduces to
+2π∫_0^∞▒∣ Z_tr (f,r)∣^2 r" " dr<∞.
+If attenuation is insufficient (e.g., resonance-dominated kernels with slow spatial decay), the second moment diverges and RMS distortion is not finite in the infinite-domain limit. The validation workflow, executed on finite-radius scenarios with explicitly specified densities and frequency grids, therefore operates in the bounded-domain regime, ensuring well-posed moment calculations and enabling rigorous comparison between analytical predictions and synthetic or feeder-level benchmarks. These assumptions establish the precise structural conditions under which the supraharmonic aggregation problem is analytically tractable, numerically reproducible, and physically interpretable.
+2.3 Spatial Deployment Model and Spatial Uncertainty Regimes
+2.3.1 Bounded Service Region vs Infinite-Plane Scaling Thought Experiment
+Let D⊂R^2denote the downstream service region supplied by the transformer, with the PCC taken as the origin o∈R^2. Two spatial regimes were specified.
+Bounded-domain regime (service-area modelling). The operational regime was defined by bounded Dwith finite area ∣D∣<∞, representing realistic transformer service regions. Aggregation statistics were therefore treated as functionals of (λⓜ,∣D∣)and the propagation kernel over finite support. A canonical geometry is the disc D=B(0,R), yielding ∣D∣=πR^2, which supports radial reduction under isotropy and enables tractable numerical quadrature.
+Infinite-domain regime (asymptotic scaling). A separate thought experiment set D=R^2, used solely to examine scaling behaviour as source density increases. In this regime, moment existence requires explicit kernel attenuation conditions ensuring that integrals such as
+∫_(R^2)▒∣ Z_tr (f,∥x∥)∣^2 dx
+remain finite. The bounded and infinite regimes were treated analytically distinct; no result relies simultaneously on incompatible domain assumptions.
+2.3.2 Baseline Homogeneous PPP and Interpretation of Intensity as “Active Charger Density”
+Active source locations were modelled as a homogeneous Poisson point process (PPP)
+Φ={x_i}⊂D⊂R^2,
+with constant intensity λ>0(active chargers per unit area). Let N=#(Φ∩D); then
+N∼Poisson(λ∣D∣),E[N]=λ∣D∣.
+Conditional on N, locations are i.i.d. and uniformly distributed over D. Defining radial distance d_i:=∥x_i∥, isotropy permits reduction of radially symmetric integrands to one-dimensional form:
+∫_(R^2)▒〖f(∥x∥)dx=2π〗 ∫_0^∞▒〖f(r)r" " dr.〗
+For the bounded-disc case D=B(0,R), radial distance follows
+f_R (r)=2r/R^2 ,0≤r≤R.
+This quadratic distance law reflects area-uniform sampling and constitutes a geometric abstraction relative to graph-structured feeder topologies. The quantitative impact of replacing this isotropic deployment with a simple branched feeder surrogate, while holding kernel and mark structure fixed, is assessed via a geometry-ablation benchmark in Section 3.6. Intensity λ was interpreted as active charger density. Under independent thinning, installed density λ_instand activity probability p_actyield λ=p_act λ_inst. Baseline benchmark parameters were λ=2×10^(-5) " " m^(-2)and R=500" " m.
+2.3.3 Spatial Uncertainty Extensions
+Spatial uncertainty was represented as uncertainty in domain D, observation geometry, and active-set realisation. Random service radius, uncertain PCC siting, and independent thinning preserve conditioning structure and permit moment computation conditional on realisations before averaging over uncertainty distributions. Stress-test deployments (clustered and inhomogeneous) were incorporated numerically to illustrate tail sensitivity but did not modify baseline analytical derivations.
+2.4 Electrical mark model for supraharmonic sources
+2.4.1 Norton injection representation; magnitude–phase marks
+At each analysis frequency f, each charger is represented by a Norton equivalent comprising a current source in parallel with an internal admittance. The injected supraharmonic current of charger iis modelled as the complex phasor
+■(&I_i (f)=I_(sh,i) (f)e^(jϕ_i (f)),&&"(2.4-1)" )
+where I_(sh,i) (f)≥0denotes emission magnitude and ϕ_i (f)∈[0,2π)denotes emission phase. The ordered pair m_i (f):=(I_(sh,i) (f),ϕ_i (f))  constitutes the primary electrical mark. Phase randomness underpins stochastic cancellation. The baseline asynchrony condition requires only
+■(&E[e^(jϕ_i (f))]=0,&&"(2.4-2)" )
+satisfied by the uniform distribution ϕ_i (f)∼Unif(0,2π). This condition ensures zero mean aggregate voltage and yields RMS(f)∝√λscaling under independence. For reproducible benchmarking, emission magnitude was instantiated as lognormal:
+■(&I_(sh,i) (f)∼Lognormal(μ_I (f),σ_I^2 (f)).&&"(2.4-3)" )
+
+The analytical framework itself remains distribution-agnostic provided finite second moments exist.
+2.4.2 Internal Admittance and Absorption Effects
+Each charger presents a small-signal internal admittance Y_i (f), representing absorption behaviour of the converter input stage. Under baseline Assumption A7,
+■(&Y_i (f)≡Y(f),∀i.&&"(2.4-4)" )
+In the supraharmonic band, a capacitive approximation is admissible:
+■(&Y(f)=j2πfC_eq.&&"(2.4-5)" )
+The effective injection entering aggregation is therefore
+■(&I ̃_i (f)=(I_(sh,i) (f)e^(jϕ_i (f)))/(1+Y(f)Z_tr (f,d_i)).&&"(2.4-6)" )
+The denominator regularises near-field amplification and enters moment integrability conditions:
+■(&∫_D▒E [(∣Z_tr (f,∥x∥)∣^2∣I(f)∣^2)/(∣1+Y(f)Z_tr (f,∥x∥)∣^2 )]dx<∞.&&"(2.4-7)" )
+Random-Admittance Generalisation
+To assess robustness beyond A7, a heterogeneous extension is defined:
+Y_i (f)=μ_Y (f)+δY_i (f),
+
+E[δY_i (f)]=0,Var[Y_i (f)]=σ_Y^2 (f),
+with finite second moments.
+All point-process moment derivations remain valid under this generalisation; only the variance integrand changes through expectation over Y_i (f). The deterministic formulation is therefore a special case with σ_Y=0.
+2.4.3 Optional Mark Enrichments
+Multi-class chargers, frequency-dependent mark parametrisation, mark–kernel coupling, partial phase coherence, and random admittance are all compatible with the shot-noise framework provided finite moments and bounded-denominator conditions hold. Partial coherence is modelled via ϕ_i (f)=ψ(f)+ε_i (f), with coherence factor ρ=E[e^(jε_i (f))]. Random admittance constitutes an additional independent mark dimension, enabling sensitivity evaluation of absorption heterogeneity.
+2.5 Propagation kernel (transfer impedance) and integrability conditions
+2.5.1 Transfer-impedance kernel definition and physical interpretation
+At each supraharmonic frequency f(treated on a frequency-by-frequency basis), the network between an injection point x∈D⊂R^2 and the PCC was represented by a complex transfer impedance〖 Z〗_tr (f,∥x∥)∈C, mapping a Norton-equivalent current injection to the resulting complex PCC voltage contribution. The per-source propagated contribution was defined as the “kernelised” term
+■(&g(f,x,m)"  " ="  "  (Z_tr (f,∥x∥)" " I(f)" " e^jϕ)/(1+Y(f)" " Z_tr (f,∥x∥)),&&"(2.8-2)" )
+and the aggregate PCC voltage at frequency f was written as a complex shot-noise functional
+■(&V(f)"  " ="  " ∑_((x_i,m_i)∈Φ ̃)▒〖g(f,〗 x_i,m_i).&&"(2.8-3)" )
+This form makes explicit that propagation enters only through Z_tr, while absorption/self-loading enters via the factor (1+Y(f)Z_tr )^(-1). Physically, Z_tr (f,d)encapsulates frequency-selective impedance growth/decay and phase rotation along the feeder and transformer path. The absorption factor was interpreted as limiting near-field amplification by preventing an uncontrolled increase of ∣g∣when ∣Z_tr∣becomes large at resonant frequencies, and by ensuring the model remains compatible with the boundedness condition required for second-order statistics.
+2.5.2 Distance vs electrical-distance formulations; feeder-archetype conditioning
+Two complementary kernel instantiations were used in the project workflow: (i) a feeder-level benchmark kernel constructed from a distributed-parameter cable abstraction plus a transformer Thevenin term; and (ii) an RLGC-inspired parametric kernel used across synthetic and stress-test configurations.
+Feeder-benchmark kernel (electrical distance). For the benchmark, an “electrical distance” coordinate d" "[m]was used for plotting and tabulation (rather than strict Euclidean distance), consistent with the artefact definition of kernel magnitude versus distance. The cable was represented by per-unit-length series impedance and shunt admittance,
+z(ω)=(R+jωL)/1000,y(ω)=(G+jωC)/1000,
+leading to the standard propagation constant and characteristic impedance,
+γ(ω)=√(z(ω)y(ω)),Z_c (ω)=√((z(ω))/(y(ω))).
+A distance-dependent line transfer term was then formed and combined with a transformer Thevenin impedance Z_th (ω),
+Z_line (ω,d)=Z_c (ω)e^(-γ(ω)d),Z_th (ω)=R_th+jωL_th,
+Z_tr (f,d)=Z_th (2πf)"  "+"  "  (Z_line (2πf,d))/(1+d/D_0 ),
+where the additional envelope 1/(1+d/D_0)enforced a conservative attenuation regularisation at long range in the benchmark implementation.
+Parametric kernel (feeder archetypes). For synthetic evaluation and archetype conditioning, the propagation kernel was implemented as an “ExponentialKernel” with RLGC-inspired terms and bounded resonance emphasis. Given ω=2πf, the per-kilometre series impedance and shunt admittance were set as
+Z_s (ω)=r+jωl,Y_p (ω)=g+jωc,
+leading to
+γ(ω)=√(Z_s (ω)Y_p (ω)),Z_c (ω)=√((Z_s (ω))/(Y_p (ω))).
+The distance dependence was modelled through an exponential envelope and an extra attenuation parameter α>0, A(ω,d)=exp⁡(-(γ(ω)+α)" " d), and a voltage-divider term capturing source and load impedances, 
+D(ω)=Z_L/(Z_L+Z_c (ω)+Z_S ).
+A resonance gain function was applied in a strictly bounded Lorentzian-like form around
+f_0=1/(2π√lc),G_res (f)=1+s/(1+((f-f_0)/w)^2 ),
+yielding the effective transfer impedance
+Z_tr (f,d)"  "="  " Z_c (2πf)" " A(2πf,d)" " D(2πf)" " G_res (f).
+This implementation was explicitly parameterised to support feeder-archetype variants (e.g., “urban_short”, “suburban_medium”, “rural_long”) by changing r,l,cand α, as well as the resonance-scale factor s.
+2.5.3 Attenuation envelopes and conditions guaranteeing finite moments
+The analytical derivations required that the shot-noise kernel be integrable in the sense that the first and second moment conditions hold:
+∫_D▒E_m  [∣g(f,x,m)∣]" " dx<∞"(C1)",∫_D▒E_m  [∣g(f,x,m)∣^2 ]" " dx<∞"(C2)".
+Since ∣e^jϕ∣=1, these reduced to integrability of
+■(&(∣Z_tr (f,∥x∥)∣^p " " ∣I(f)∣^p)/(∣1+Y(f)" " Z_tr (f,∥x∥)∣^p ),p∈{1,2}.&&"(B.2)" )
+
+Bounded-domain sufficiency. For a finite service region ∣D∣<∞, sufficient conditions were given by finite mark second moment and bounded kernel magnitude on D,
+■(&E[∣I(f)∣^2 ]<∞,(sup⁡)┬(x∈D)∣Z_tr (f,∥x∥)∣<∞,&&"(B.3)" )
+in which case both (C1) and (C2) follow by bounding ∣g∣on a finite-area domain, provided the denominator is bounded away from zero for finite Z_tr.
+Infinite-plane regime and decay rates. In the asymptotic regime D=R^2, finiteness of the second moment was linked to the tail decay of the transfer impedance. A sufficient condition was stated as a power-law envelope
+■(&∣Z_tr (f,d)∣≤Cd^(-α),d→∞,&&"(B.4)" )
+which yields convergence of ∫_(R^2)▒∣ Z_tr ∣^2 dxif and only if α>1(via the polar-coordinate integral ∫_0^∞▒r^(1-2α)  " " dr). Exponential attenuation,
+■(&∣Z_tr (f,d)∣≤Ce^(-βd),β>0,&&"(B.5)" )
+was identified as an automatically sufficient envelope, consistent with distributed-parameter cable models exhibiting resistive losses.
+Absorption/denominator separation and numerical regularisation. Beyond the analytical condition “Y(f)≥0” used in the sufficiency statement, the implementation enforced a conservative lower bound on the magnitude of the absorption denominator to avoid near-singular amplification in finite-sample workflows. Specifically, a minimum denominator magnitude gate was configured (e.g., "GATE_DENOM_MIN" ), and a regularisation pathway was unit-tested using a near-singular kernel case to ensure ∣V(f)∣remains finite in computation even when 1+Y(f)Z_tr (f,d)approaches zero numerically.
+Integrability was operationalised in the project API as an explicit check distinguishing finite-domain feasibility (requiring, at minimum, positive region radius and intensity) from asymptotic feasibility (requiring positive attenuation parameter and non-negative admittance), thereby aligning numerical runs with the theoretical boundedness roadmap in Appendix B.
+2.6 Aggregate voltage as a marked shot-noise functional
+2.6.1 Shot-noise representation; decomposition of spatial/mark/propagation randomness
+Let Φ={x_i}⊂D⊂R^2denote the spatial point process of active chargers, modelled in the baseline case as a homogeneous PPP of intensity λ. Each point x_icarries a frequency-dependent electrical mark m_i (f)=(I_(sh,i) (f),ϕ_i (f)),together with an internal admittance Y(f). The per-source propagated contribution to the PCC at frequency fwas defined as
+■(&g(f,x_i,m_i)=(Z_tr (f,∥x_i∥)" " I_(sh,i) (f)e^(jϕ_i (f)))/(1+Y(f)" " Z_tr (f,∥x_i∥)).&&"(2.6-1)" )
+The aggregate PCC voltage was therefore written as the marked shot-noise sum
+■(&V(f)=∑_((x_i,m_i)∈Φ ̃)▒〖g(f,〗 x_i,m_i),&&"(2.6-2)" )
+where Φ ̃ denotes the marked point process. This representation yields a transparent decomposition of randomness into three structurally distinct layers:
+	Spatial randomness: the point configuration Φ, characterised by intensity λand domain D.
+	Electrical mark randomness: amplitude I_sh (f), phase ϕ(f), and possibly random admittance.
+	Propagation randomness (deterministic conditional on location): the transfer impedance Z_tr (f,∥x∥), which maps spatial geometry into frequency-dependent weighting.
+Conditional on Φ, the sum (2.6-2) is a finite or countable superposition of complex random variables. Unconditionally, it becomes a compound Poisson-type field whose statistics can be derived via standard point-process tools, provided the integrability conditions
+■(&∫_D▒E_m  [∣g(f,x,m)∣^p ]dx<∞,p∈{1,2},&&"(2.6-3)" )
+are satisfied. The decomposition in (2.6-2) is central: spatial density λgoverns the number of terms, propagation governs their spatial weighting, and marks govern their complex amplitude and phase. The validate-and-benchmark workflow, executed over a discrete grid f∈[2,150]" " kHz, numerically evaluated this functional under controlled seeds and sample counts, thereby empirically confirming analytical moment expressions under repeated spatial and mark resampling.
+2.6.2 Mean cancellation under phase diversity; interpretation for Supraharmonics
+A key analytical insight arises from the phase structure of the marks. Under the baseline asynchrony condition
+■(&E[e^(jϕ(f)) ]=0,&&"(2.6-4)" )
+the conditional mean contribution of each source vanishes: E_m [g(f,x,m)]=0.
+Applying Campbell’s theorem to (2.6-2) therefore yields
+■(&E[V(f)]=λ∫_D▒E_m [g(f,x,m)]" " dx=0.&&"(2.6-5)" )
+
+Thus, under phase diversity, the aggregate complex voltage has zero mean at each frequency, and distortion is governed by second-order statistics:
+■(&E[∣V(f)∣^2 ]=λ∫_D▒E_m  [∣g(f,x,m)∣^2 ]dx.&&"(2.6-6)" )
+This establishes the classical √λscaling of RMS magnitude in the incoherent regime. Specifically, letting
+σ^2 (f)=∫_D▒E_m  [∣g(f,x,m)∣^2 ]dx,
+
+one obtains
+■(&RMS(f)=√(E[|V(f) ∣^2 ] )=√(λ" " σ^2 (f) )∝√λ.&&"(2.6-7)" )
+For supraharmonic emissions from independently switching power electronic converters, such phase diversity is physically justified: switching clocks are not synchronised across devices, and small frequency offsets and control jitter produce effective de-correlation across the population. Consequently, statistical cancellation is not incidental but structurally embedded in converter-interfaced aggregation. Deviations from (2.6-4), such as partial coherence or common control reference signals, introduce a residual mean component and alter scaling behaviour toward O(λ)growth. This sensitivity was explicitly stress-tested in robustness scenarios within the project workflow, confirming the central role of phase diversity in controlling transformer-level supraharmonic distortion. In summary, the marked shot-noise representation (2.6-2) provides both the mathematical vehicle for closed-form moment derivation and the physical interpretation of supraharmonic aggregation as a balance between spatial accumulation and stochastic.
+2.7 Point-process analysis and closed-/semi-closed-form statistics
+Let Φ ̃={(x_i,m_i)}denote a marked homogeneous Poisson point process (PPP) of intensity λon a service region D⊂R^2, with marks independent of locations. For a fixed frequency f, define the per-source contribution
+g(f,x,m)=(Z_tr (f,∥x∥)" " I(f)" " e^jϕ)/(1+Y(f)" " Z_tr (f,∥x∥)),
+and the aggregate voltage
+■(&V(f)=∑_((x_i,m_i)∈Φ ̃)▒〖g(f,〗 x_i,m_i).&&"(2.7-1)" )
+Throughout this section, integrability conditions of the form
+■(&∫_D▒E_m  [∣g(f,x,m)∣^p ]" " dx<∞,p∈{1,2},&&"(2.7-2)" )
+were assumed to hold, consistent with the kernel attenuation requirements and bounded-domain conditions specified previously.
+2.7.1 Campbell’s theorem for first-order statistics
+Campbell’s theorem for marked PPPs states that, for measurable h(x,m),
+■(&E[∑_((x_i,m_i)∈Φ ̃)▒h(x_i,m_i)]=λ∫_D▒E_m [h(x,m)]" " dx.&&"(2.7-3)" )
+Applying (2.7-3) to h=g(f,⋅,⋅)yields the first-order statistic of the aggregate voltage:
+■(&E[V(f)]=λ∫_D▒E_m [g(f,x,m)]" " dx.&&"(2.7-4)" )
+Under the baseline phase-diversity condition
+■(&E[e^(jϕ(f)) ]=0,&&"(2.7-5)" )
+it follows that E_m [g(f,x,m)]=0, and therefore
+■(&E[V(f)]=0.&&"(2.7-6)" )
+Thus, in the incoherent regime, the aggregate complex voltage is centred, and first-order effects do not accumulate with density. The interpretation for supraharmonics is immediate: independently switching converter emissions cancel in expectation at each frequency.
+If phase coherence is introduced—e.g. through a non-zero coherence factor ρ=E[e^jϕ]≠0—then
+■(&E[V(f)]=λρ∫_D▒E_I  [(Z_tr (f,∥x∥)" " I(f))/(1+Y(f)" " Z_tr (f,∥x∥))]dx,&&"(2.7-7)" )
+revealing linear growth in λ of the mean component.
+2.7.2 PGFL/Laplace functional for marked PPP; second-order behaviour
+The second-order behaviour follows from the probability generating functional (PGFL) of a marked PPP. For measurable u(x,m),
+■(&E[∏_((x_i,m_i)∈Φ ̃)▒u(x_i,m_i)]=exp(-λ∫_D▒( 1-E_m [u(x,m)])" " dx).&&"(2.7-8)" )
+Setting u(x,m)=exp⁡{jθg(f,x,m)}yields the characteristic function of V(f):
+■(&φ_(V(f)) (θ)=exp(λ∫_D▒( E_m [e^jθg(f,x,m)  ]-1)dx).&&"(2.7-9)" )
+Expanding (2.7-9) to second order in θgives the variance:
+■(&Var[V(f)]=λ∫_D▒E_m  [∣g(f,x,m)∣^2 ]dx,&&"(2.7-10)" )
+where cross terms vanish due to independence and phase diversity. Substituting the definition of g,
+■(&Var[V(f)]=λ∫_D▒E [(∣Z_tr (f,∥x∥)∣^2 " " ∣I(f)∣^2)/(∣1+Y(f)" " Z_tr (f,∥x∥)∣^2 )]dx.&&"(2.7-11)" )
+Equation (2.7-11) is semi-closed-form: the spatial integral is explicit, while the mark expectation depends only on the chosen emission distribution (e.g. lognormal). Under radial symmetry in a disc D=B(0,R),
+■(&Var[V(f)]=2πλ∫_0^R▒E [(∣Z_tr (f,r)∣^2 " " ∣I(f)∣^2)/(∣1+Y(f)" " Z_tr (f,r)∣^2 )]r" " dr.&&"(2.7-12)" )
+These expressions were numerically evaluated over the frequency grid f∈[2,150]" " kHz with 1 kHz resolution in the validation workflow, and compared against Monte Carlo and independent feeder-level benchmarks under multiple seeds and sample counts.
+2.7.3 RMS scaling laws with intensity; coherent vs incoherent limits
+Define
+■(&σ^2 (f)=∫_D▒E_m  [∣g(f,x,m)∣^2 ]dx.&&"(2.7-13)" )
+In the incoherent regime, (2.7-10) yields
+■(&RMS(f)=√(E[∣V(f)∣^2])=√(λ" " σ^2 (f))∝√λ.&&"(2.7-14)" )
+Thus, increasing active charger density leads to sublinear RMS growth due to cancellation. This scaling was empirically confirmed across density sweeps in the bounded-domain regime.
+In contrast, if phases are fully coherent (ϕ_i≡ϕ), then
+V(f)=e^jϕ ∑_(i=1)^N▒(Z_tr (f,d_i)" " I_i (f))/(1+Y(f)" " Z_tr (f,d_i)),
+and
+E[V(f)]∼λ∫_D▒E_I [⋅]" " dx,
+implying
+■(&RMS(f)∼O(λ).&&"(2.7-15)" )
+Partial coherence produces a superposition of O(λ)mean and O(√λ)fluctuation components, yielding a density-dependent crossover.
+2.7.4 Boundedness proofs roadmap (main text vs appendix placement)
+The main text established the structure of (2.7-3)-(2.7-12) under stated integrability conditions. Detailed boundedness proofs were deferred to the appendix, following a standard roadmap:
+	Finite-domain case.
+If ∣D∣<∞, E[∣I(f)∣^2]<∞, and 〖sup⁡〗_(x∈D)∣Z_tr (f,∥x∥)∣<∞, then both first and second moments are finite.
+	Infinite-domain case.
+Require
+∫_(R^2)▒∣ Z_tr (f,∥x∥)∣^2 " " dx<∞,
+satisfied, for example, by exponential decay envelopes or power-law decay with exponent >1.
+	Denominator separation.
+Impose ∣1+Y(f)" " Z_tr (f,d)∣≥c_0>0, preventing singular amplification.
+These conditions ensure that (2.7-2) holds and justify exchange of expectation and summation in (2.7-3). The appendix provides rigorous measure-theoretic justification; the main text presents the resulting statistics and their physical interpretation.
+In summary, the marked PPP framework yields explicit expressions for mean, variance, characteristic function, and scaling behaviour of supraharmonic aggregation. These expressions are closed in density and semi-closed in propagation/mark structure, thereby enabling analytic-numerical validation across the specified frequency grid and multi-seed robustness protocol.
+2.8 Tail metrics and “risk-style” quantities for planning
+2.8.1 Percentiles/CCDF of ∣V∣; exceedance probabilities for compatibility-style thresholds
+Let V(f)denote the complex aggregate voltage at frequency f, as defined in the marked shot-noise representation. Planning-relevant quantities were formulated in terms of the magnitude random variable
+■(&R(f):=∣V(f)∣.&&"(2.8-1)" )
+
+The complementary cumulative distribution function (CCDF) was defined as
+■(&F ‾_R (v;f)=P(R(f)>v),v≥0,&&"(2.8-2)" )
+which directly measures the probability that a specified distortion level is exceeded. Percentile metrics were expressed as
+■(&Q_p (f)=inf⁡{v≥0:P(R(f)≤v)≥p},p∈(0,1),&&"(2.8-3)" )
+
+with particular emphasis placed on high quantiles (e.g., p=0.90,0.95,0.99), consistent with compatibility-style engineering practice and with the validation scorecards produced in the benchmark workflow. Given a compatibility-style limit τ(f), the exceedance probability was defined as
+■(&P_exc (f;τ)=P(R(f)>τ(f))=F ‾_R (τ(f);f).&&"(2.8-4)" )
+
+Under the PPP framework with phase diversity, the distribution of V(f)is circularly symmetric about zero in the incoherent regime. In this case, the risk metric (2.8-4) depends entirely on second-order structure and propagation filtering via the integral
+■(&Var[V(f)]=λ∫_D▒E_m  [∣g(f,x,m)∣^2 ]dx,&&"(2.8-5)" )
+thereby linking tail probabilities explicitly to active density λ, service geometry D, and kernel attenuation. These quantities were computed numerically across the frequency grid f∈[2,150]" " kHz (1 kHz resolution) in the validation workflow, with repeated sampling across independent seeds to assess stability of high-quantile estimates.
+2.8.2 Approximations (e.g., Gaussian/Rice-type surrogates) and validity checks
+Closed-form expressions for the full distribution of R(f)are generally unavailable; however, tractable surrogates arise from the characteristic function derived via the PGFL. In the incoherent regime, where
+■(&E[V(f)]=0,&&"(2.8-6)" )
+and many independent contributions are superposed, a complex Gaussian approximation is justified by the central limit effect. Thus,
+■(&V(f)≈CN(0,σ^2 (f)),σ^2 (f)=Var[V(f)].&&"(2.8-7)" )
+Under (2.8-7), the magnitude R(f)follows a Rayleigh distribution,
+■(&f_R (r;f)=r/(σ^2 (f)) exp(r^2/(2σ^2 (f))),r≥0,&&"(2.8-8)" )
+and the exceedance probability simplifies to
+■(&P_exc (f;τ)=exp⁡(-τ^2/(2σ^2 (f))).&&"(2.8-9)" )
+If partial coherence induces a non-zero mean
+
+■(&μ(f)=E[V(f)]≠0,&&"(2.8-10)" )
+then V(f)is approximately complex Gaussian with mean μ(f), and R(f)follows a Rice distribution, yielding
+■(&P_exc (f;τ)=Q_1 ( (∣μ(f)∣)/(σ(f))ⓜ,τ/(σ(f))),&&"(2.8-11)" )
+where Q_1 (⋅,⋅)is the first-order Marcum Q-function.
+Validity of these surrogates was checked numerically by comparing empirical CCDFs from Monte Carlo realisations (2048 baseline samples, multi-seed replications) against analytic Rayleigh/Rice envelopes across the analysis band. Agreement was observed in regimes where integrability holds and no extreme kernel resonance dominates a small number of contributors; deviations were interpreted as indicators of clustering, heavy-tailed marks, or coherence transitions. Accordingly, the framework translates spatial-electrical uncertainty into explicit “risk-style” distortion metrics, enabling density- or area-dependent planning decisions to be expressed in probabilistic exceedance form rather than solely in mean or RMS terms.
+2.9 Numerical scheme and validation protocol
+2.9.1 Monte Carlo generation consistent with the point-process model
+Let D⊂R^2 be a bounded service region with the PCC at the origin. For each frequency f(kHz), a realisation is generated by sampling the number of active sources N∼Poisson(λ∣D∣), then sampling locations {x_i }_(i=1)^N ┤i.i.d. uniformly over D, and finally sampling marks {m_i }_(i=1)^N ┤independently from the prescribed mark law. The aggregate voltage for Monte Carlo index kis computed by the model-consistent shot-noise sum
+■(&V^((k) ) (f)=∑_(i=1)^(N^((k) ))▒g" "  (fⓜ,x_i^((k) )ⓜ,m_i^((k) ) ),&&"(2.9-1)" )
+and any functional Ψ is estimated by
+■(&E ̂[Ψ(V)]=1/K ∑_(k=1)^K▒Ψ (V^((k) ) (f)),&&"(2.9-2)" )
+with almost-sure convergence as K→∞. In the implemented bounded-disc regime, radii are sampled by r=R√U to ensure uniform area density, while marks are sampled with explicit control of phase-coherence (via a “common phase” draw and coherence parameterisation) and optional absorption/admittance terms in the mark definition. The validation run used a dense frequency grid f∈[2,150] kHz with step 1 kHz and Monte Carlo sample sizes K=2048per frequency for main checks, plus K=1024 per frequency for multi-seed robustness with seeds {7, 11, 23,37, 53}.
+2.9.2 Deterministic quadrature for analytical integrals; error controls
+Where analytical expressions involve spatial integrals not reducible to closed form, deterministic quadrature is applied. Under isotropy, the planar integral is reduced to a 1D radial integral
+■(&∫_D▒E_m [⋅]" " dx"  " ="  " 2π∫_0^R▒E_m [⋅]"  " r" " dr,&&"(2.9-3)" )
+with R the service-region radius. Adaptive quadrature is then used with absolute and relative tolerances chosen so that numerical integration error is negligible compared with Monte Carlo sampling variability.
+2.9.3 Feeder-level benchmark protocol: kernel extraction and forward aggregation comparison
+The end-to-end workflow produces (a) analytical statistics, (b) Monte Carlo statistics from the stochastic model, and (c) a benchmark comparison table computed by a dedicated comparator:
+("analytical rows")"    vs    "("simulated rows")"  " →┴⟡(1&"  compare_with_feeder_benchmark  " ) ("relative-error scorecard").
+This comparator is called systematically in the analysis API after computing analytical statistics and Monte Carlo outputs, and again within the validation-and-benchmark runner to compare (i) the framework against internally generated synthetic datasets, and (ii) the framework against an independent benchmark runner (seed-offset to prevent accidental coupling). The validation suite also generates manuscript-facing benchmark specification and comparison artefacts (including a feeder-benchmark specification table and an analytical-vs-feeder metrics table) to ensure that the forward aggregation comparison is auditable at paper level.
+2.9.4 Reproducibility: parameter sets, seeds, and reporting conventions
+Reproducibility is enforced through (i) fixed seed lists for robustness studies and deterministic seed controls within the Monte Carlo runner, (ii) automatic export of a run configuration JSON including the frequency grid, sample counts, seeds, gate thresholds, and the full analysis configuration dictionary, and (iii) scorecard-style reporting that records pass/fail gates for RMS and 95^"th" percentile errors, including multi-seed pass counts and an overall verdict.
+Finally, a run manifest is exported as structured JSON (with run ID, configuration, analytical outputs, Monte Carlo outputs, benchmark rows, and log paths) and written into the manuscript artefact directory alongside generated tables/figures, providing a single-file provenance record suitable for expert review and re-execution audits.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+References 
+
+Afshang, M., & Dhillon, H. (2016). Poisson Cluster Process Based Analysis of HetNets With Correlated User and Base Station Locations. IEEE Transactions on Wireless Communications, PP. https://doi.org/10.1109/TWC.2018.2794983
+Alfalahi, S. T. Y., Alkahtani, A. A., Al-Shetwi, A. Q., Al-Ogaili, A. S., Abbood, A. A., Mansor, M. B., & Fazea, Y. (2021). Supraharmonics in Power Grid: Identification, Standards, and Measurement Techniques. IEEE Access, 9, 103677–103690. https://doi.org/10.1109/ACCESS.2021.3099013
+De Falco, P., & Varilone, P. (2021). Statistical characterization of supraharmonics in low-voltage distribution networks. Applied Sciences (Switzerland), 11(8). https://doi.org/10.3390/app11083574
+Frigo, G., & Braun, J. (2022). Supraharmonic Dynamic Phasors: Estimation of Time-Varying Emissions. IEEE Transactions on Instrumentation and Measurement, 71, 1–11. https://doi.org/10.1109/TIM.2022.3166806
+Frydlewicz, W., Michalec, Ł., Kostyła, P., Kaczorowska, D., & Sikorski, T. (2024). Influence of the Supply Voltage Variation on the Conducted Emission in the Frequency Range up to 150 kHz Injected into the Power Grid by CFL and LED Lamps—Case Study. Applied Sciences, 14(6), 2590. https://doi.org/10.3390/app14062590
+Ganti, R., & Haenggi, M. (2009). Spatial and temporal correlation of the interference in ALOHA ad hoc networks. IEEE Communications Letters, 13(9), 631–633. https://doi.org/10.1109/LCOMM.2009.090837
+Giri, M., & Rönnberg, S. (2025). Evaluation of Waveform Distortion in BESS-Integrated Fast-Charging Station. World Electric Vehicle Journal, 16(9), 497. https://doi.org/10.3390/wevj16090497
+Grasel, B., Baptista, J., & Tragner, M. (2022). Supraharmonic and Harmonic Emissions of a Bi-Directional V2G Electric Vehicle Charging Station and Their Impact to the Grid Impedance. Energies, 15(8), 2920. https://doi.org/10.3390/en15082920
+Letha, S. S., Delgado, A. E., Rönnberg, S. K., & Bollen, M. H. J. (2021). Evaluation of medium voltage network for propagation of supraharmonics resonance. Energies, 14(4). https://doi.org/10.3390/en14041093
+Li, K., Zhao, W., Li, S., & Huang, S. (2023). Performance Analysis of Matrix Pencil Method Applied to High-Resolution Measurement of Supraharmonics. Energies, 16(17), 6136. https://doi.org/10.3390/en16176136
+Lodetti, S., Gallarreta, A., Ritzmann, D., Khokhlov, V., Wright, P., Meyer, J., Fernández, I., & de la Vega, D. (2023). On the suitability of the CISPR 16 method for measuring conducted emissions in the 2–150kHz range in low voltage grids. Electric Power Systems Research, 216, 109011. https://doi.org/10.1016/j.epsr.2022.109011
+Mariscotti, A., & Mingotti, A. (2024a). The effects of supraharmonic distortion in MV and LV AC grids. Sensors, 24(8), 2465.
+Mariscotti, A., & Mingotti, A. (2024b). The Effects of Supraharmonic Distortion in MV and LV AC Grids. Sensors, 24(8). https://doi.org/10.3390/s24082465
+Mariscotti, A., Sandrolini, L., & Simonazzi, M. (2022). Supraharmonic Emissions from DC Grid Connected Wireless Power Transfer Converters. Energies, 15(14). https://doi.org/10.3390/en15145229
+Peiris, K., Elphick, S., & Robinson, D. (2025). Characterising Non-Intentional Supraharmonic Emissions from Inverters in Power Grids: Review and Challenges. Energies, 18(11), 2980.
+Rom, M., van den Brom, H. E., Houtzager, E., van Leeuwen, R., van der Born, D., Rietveld, G., & Muñoz, F. (2025). Measurement System for Current Transformer Calibration from 50 Hz to 150 kHz Using a Wideband Power Analyzer. Sensors, 25(17), 5429. https://doi.org/10.3390/s25175429
+Sandrolini, L., & Mariscotti, A. (2021). Impact of short-time fourier transform parameters on the accuracy of EMI spectra estimates in the 2-150 kHz supraharmonic interval. Electric Power Systems Research, 195, 107130. https://doi.org/https://doi.org/10.1016/j.epsr.2021.107130
+Singh, G., Cooke, T., Johns, J., Vega, L., Valdez, A., & Bull, G. (2023). Telephone Interference From Solar PV Switching. IEEE Open Access Journal of Power and Energy, 10, 373–384. https://doi.org/10.1109/OAJPE.2023.3239854
+Slangen, T., Ćuk, V., & Cobben, S. (2023). Summation of supraharmonic currents (2–150 kHz) from EV fast charging stations. Electric Power Systems Research, 220, 109371.
+Sutaria, J., & Rönnberg, S. K. (2023). Propagation of Supraharmonics in a Data Center With Different Operating Modes of UPS. IEEE Access, 11, 36823–36833. https://doi.org/10.1109/ACCESS.2023.3266092
+Wasowski, M., Sikorski, T., Wisniewski, G., Kostyla, P., Szymanda, J., Habrych, M., Gornicki, L., Sokol, J., & Jurczyk, M. (2021). The Impact of Supply Voltage Waveform Distortion on Non-Intentional Emission in the Frequency Range 2–150 kHz: An Experimental Study with Power-Line Communication and Selected End-User Equipment. Energies, 14(3), 777. https://doi.org/10.3390/en14030777
+
+8. Tables and Figures 
+Table 1 (Section 3.1 — Experimental Design)
+Table 1. Scenario matrix defining the numerical evaluation design. The supraharmonic band is discretised as a uniform frequency grid spanning 2–150 kHz in 1 kHz steps (149 bins). Monte Carlo estimation uses K=2,048samples per frequency bin for primary results. Three benchmark variants are evaluated: framework versus independent reference, framework versus internal reference, and naïve baseline versus internal reference. Extended assets are enabled, confirming that all supporting tables and figures are generated from a single, unified parameterisation. 
+Table 4 (Section 3.5 — Sensitivity and Robustness)
+Table 4. Sensitivity and robustness summary across three benchmark variants evaluated over 149 frequency bins. For each variant (framework versus internal, framework versus independent, naïve baseline versus internal), the table reports the mean, median, 90th-percentile, and maximum of the frequency-resolved RMS and P95 relative errors, together with a pass/fail gate verdict. The framework-versus-internal variant achieves a mean RMS error of 3.3%, P90 of 5.3%, and passes the gate. The framework-versus-independent variant achieves a mean RMS error of 1.8% and passes the gate. The naïve baseline exhibits a maximum RMS error of 43.8% at 2 kHz, confirming that low-frequency bins with high transfer-impedance magnitude constitute the dominant discrimination criterion between the analytical framework and the density-agnostic reference.
+Table 6 (Section 3.7 — Feeder-Level Benchmark)
+Table 6. Internal self-consistency benchmark of analytical predictions against synthetic feeder simulations. Relative error statistics for RMS, P95, and P99 predictions evaluated over 149 frequency bins per feeder archetype. The overall benchmark achieves a mean RMS error of 2.5% and P90 of 4.4%. Per-feeder mean RMS errors are 2.0% (Feeder A), 2.1% (Feeder B), and 3.4% (Feeder C). Maximum single-frequency RMS errors are 15.6%, 4.7%, and 5.3% for Feeders A, B, and C respectively. All archetypes satisfy predefined internal consistency gates across RMS, P95, and P99 metrics. These results demonstrate numerical agreement within the synthetic RLGC-derived kernel family; they do not constitute external empirical validation.
+Figures
+ 
+Figure 1. Transfer-Impedance Kernel. Section 2.5
+
+Transfer-impedance kernel magnitude |Ztr(f,d)| (Ω) versus source distance d (0-1,000 m) at representative supraharmonic frequencies (10, 30, 80, and 150 kHz) for three synthetic feeder archetypes: Feeder A (urban short, left), Feeder B (suburban medium, centre), and Feeder C (rural long, right). For each feeder, |Ztr(f,d)| decreases monotonically with distance, reflecting distributed line attenuation. The attenuation trend is qualitatively similar across frequencies, with modest magnitude separation between 10 and 150 kHz. The near-source magnitude is lowest for Feeder A and highest for Feeder C, consistent with the higher characteristic impedance and lower per-unit-length conductance typical of longer rural feeders.
+ 
+Figure 2 (Section 3.3 - Density Scaling).
+
+Aggregate PCC RMS voltage as a function of active charger density at 10 kHz, 30 kHz, and 100 kHz, displayed on log–log axes. Fitted log–log slopes of 0.51, 0.51, and 0.50 are consistent with the analytically predicted exponent of 0.5, confirming the scaling law V_RMS (f)∝√λin the phase-asynchronous regime. The dashed line denotes the √λ reference scaling. Shaded bands represent 95% Monte Carlo intervals across five independent random seeds. A threefold increase in density (from ≈6 to ≈18 devices) produces an RMS amplification of approximately 60–70%, rather than the threefold increase that would arise under fully coherent (∝λ) phasor addition, illustrating the sublinear growth induced by stochastic phase cancellation across the supraharmonic band.
+ 
+Figure 2b (Section 3.3 — Full-Band Density–Frequency RMS Map).
+Frequency–density heatmap of aggregate PCC RMS(|V|) across 2–150 kHz. Colour indicates RMS magnitude (V); white contours mark 0.03, 0.06, 0.09, 0.12, 0.15, and 0.18 V levels. At low density (λ ≈ 0.25), RMS remains below ~0.03 V across the band. At λ ≈ 18, RMS reaches ~0.22 V near 2 kHz and exceeds 0.12 V across much of the band. The near-vertical contour structure confirms √λ scaling dominance, with frequency dependence driven by the transfer-impedance kernel.
+ 
+Figure 3 (Section 3.4 — Extreme-Percentile Map).
+Frequency–density heatmap of P99(|V|) across the 2–150 kHz band. Colour denotes P99 magnitude (V); white contours mark 0.08, 0.16, 0.24, 0.32, 0.40, and 0.56 V levels. At low density (λ ≈ 0.25), P99 remains below ~0.08 V across the band. At λ ≈ 18, P99 reaches ~0.60 V near 2 kHz and exceeds 0.24 V across most mid-to-high frequencies. The 0.16 V contour intersects λ ≈ 4–5 at mid-band (≈40–80 kHz), while the 0.32 V contour appears near λ ≈ 10–12. Elevated low-frequency values reflect larger transfer-impedance magnitudes, with density providing the dominant scaling driver.
+ 
+Figure 4 (Section 3.6 — Spatial Process Comparison).
+
+P99 aggregate PCC voltage magnitude at 30 kHz under three spatial deployment models — clustered (Neyman–Scott), homogeneous PPP, and repulsive (hard-core) — evaluated at equal mean density. Relative to the homogeneous PPP baseline, clustering increases P99 by +12.9%, whereas the repulsive configuration reduces P99 by −2.5%, as indicated above the bars. Error bars denote 95% intervals across five independent Monte Carlo seeds. The ordering (clustered > PPP > repulsive) demonstrates that spatial second-order structure, beyond mean density alone, influences extreme-percentile distortion risk, with implications for planning in concentrated public charging hubs versus dispersed residential deployments.
+ 
+
+Figure 5 (Section 3.5: Phase Coherence Sensitivity): Dependence of extreme-percentile aggregate PCC voltage magnitude on the phase-coherence parameter ρ at 30 kHz. The solid curve (left axis) shows P99(|V|) as a function of ρ, while the dashed curve (right axis) shows the exceedance probability P(|V| > 0.30 V). Shaded bands denote 95% Monte Carlo intervals across five independent seeds. Increasing ρ from 0 to 0.2 produces a sharp rise in P99(|V|) (approximately 0.24 V to 0.45 V), representing nearly a twofold increase in extreme-percentile distortion. For ρ ≳ 0.4, growth moderates and stabilises near 0.5 V, indicating a transition from cancellation-dominated aggregation to a coherence-influenced regime. Even modest partial synchronisation therefore materially increases tail risk relative to the fully asynchronous case.
+ 
+Figure 6 (Section 3.7 — Spatial Process Effects Across Frequency).
+Aggregate extreme-percentile distortion outcomes across the 2–150 kHz band under three spatial process classes — clustered (Neyman–Scott), homogeneous PPP, and repulsive (hard-core) — evaluated at equal mean active-source density. The left panel shows P99(|V|) versus frequency, and the right panel shows the corresponding exceedance probability P(|V| > 0.30 V) under a fixed screening threshold. Shaded bands denote 95% Monte Carlo intervals across five independent seeds. Across the band, the ordering clustered > PPP > repulsive is preserved, with separation most pronounced at very low frequencies (≈2–5 kHz), where P99 is highest due to larger transfer-impedance magnitudes. Differences narrow in the mid-band and widen modestly again toward higher frequencies. The results demonstrate that spatial second-order structure systematically modulates extreme-percentile distortion risk beyond mean density alone.
+
+ 
+
+Figure 7. Analytical versus feeder-simulated PCC distortion metrics across the 2–150 kHz band for Feeder Archetypes A (urban short), B (suburban medium), and C (rural long). The left panel shows RMS(|V|) and the right panel shows P99(|V|), with predicted values on the horizontal axis and feeder-simulated values on the vertical axis. Each point corresponds to one frequency bin (n = 447 total across three feeders). The dashed line denotes 1:1 agreement. Aggregate errors are low (RMS: MAE = 0.036 V, RMSE = 0.045 V; P99: MAE = 0.138 V, RMSE = 0.183 V), with feeder-specific error metrics shown in-panel. The tight clustering about the identity line indicates strong split-consistency between the analytical framework and feeder-resolved simulation across both mean-energy and extreme-percentile distortion metrics.
+
+ 
+Figure 8. Allowable active-device density λ*(f) (devices per unit area) as a function of frequency under a P99 compatibility threshold of τ = 0.30 V. At each frequency, the allowable density is obtained by inverting the analytical percentile expression for P99(|V|) under the zero-mean (Rayleigh) regime. The resulting frontier exhibits a minimum of approximately 6 devices per unit area at very low frequencies (≈ 2–10 kHz), where larger transfer-impedance magnitudes inflate σ₀²(f) and therefore tighten the admissible density bound. A broad plateau near 18 devices per unit area is observed across the mid-band (≈25–100 kHz), while allowable density declines gradually beyond ≈110 kHz as P99 sensitivity increases. The figure defines a frequency-resolved hosting-capacity envelope governed by the most restrictive bins rather than a uniform band-wide ceiling.
+ 
+Figure 8b. Sensitivity of allowable active-device density λ*(f) to the extreme-percentile compatibility threshold τ under the constraint P99(|V|) ≤ τ. Curves are shown for τ = 0.20 V, 0.30 V, and 0.50 V. Increasing τ systematically relaxes the admissible density bound at all frequencies. In the mid-band, the increase in allowable density between τ = 0.20 V and τ = 0.30 V is broadly consistent with the quadratic dependence λ* ∝ τ² predicted by the Rayleigh inversion in the incoherent regime. For τ = 0.50 V, the constraint becomes non-binding over most of the band and the allowable density saturates at the scenario ceiling (18 units). Low-frequency bins remain most restrictive due to elevated transfer-impedance magnitudes.
+
+
+
+
+
+
+
+

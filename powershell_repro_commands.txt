@@ -1,0 +1,5 @@
+cd "C:\Users\joshn\Desktop\package 1"
+
+python examples\validate_and_benchmark.py --output-dir benchmark_reports --samples 2048 --multiseed-samples 1024 --seeds 7,11,23,37,53 --f-min 2 --f-max 150 --f-step 1
+
+python scripts\reanalyze_available_synthetic.py --synthetic-dir synthetic_data --benchmark-dir benchmark_reports --output-dir manuscript/artifacts

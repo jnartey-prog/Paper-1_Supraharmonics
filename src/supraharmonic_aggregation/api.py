@@ -13,7 +13,6 @@ from .logging_config import create_logger
 from .models import RunBundle
 from .simulation.monte_carlo import MonteCarloRunner
 from .artifacts.generator import ArtifactGenerator
-from .artifacts.manifest import build_artifact_manifest
 
 
 def default_config() -> AnalysisConfig:
@@ -83,14 +82,14 @@ def generate_artifacts(run: RunBundle, output_dir: str | None = None) -> list[st
     return paths
 
 
-def run_pipeline(config_path: str | None = None, output_dir: str = "manuscript/artifacts") -> RunBundle:
+def run_pipeline(
+    config_path: str | None = None, output_dir: str = "manuscript/artifacts"
+) -> RunBundle:
     """Run end-to-end workflow using config file or defaults."""
     config = load_config(config_path)
     config.output_dir = output_dir
     run = analyze(config)
-    artifact_paths = generate_artifacts(run, output_dir=output_dir)
-    manifest_data = build_artifact_manifest(artifact_paths)
-    manifest_data["run_id"] = run.run_id
+    generate_artifacts(run, output_dir=output_dir)
     manifest_path = Path(output_dir) / "run_manifest.json"
     run.run_manifest_path = export_run_manifest(run, str(manifest_path))
     return run

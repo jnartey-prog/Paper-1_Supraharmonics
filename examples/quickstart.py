@@ -10,10 +10,10 @@ SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-import supraharmonic_aggregation as sha
-
 
 def main() -> None:
+    import supraharmonic_aggregation as sha
+
     config = sha.default_config()
     run = sha.analyze(config)
     sha.generate_artifacts(run, output_dir=config.output_dir)

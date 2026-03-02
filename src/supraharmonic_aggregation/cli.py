@@ -48,9 +48,9 @@ def main(argv: list[str] | None = None) -> int:
 
     config_path = args.config
     if args.quickstart and not config_path:
-        path = Path(args.output_dir) / "default_config.json"
-        save_config(default_config(), str(path))
-        config_path = str(path)
+        default_config_path = Path(args.output_dir) / "default_config.json"
+        save_config(default_config(), str(default_config_path))
+        config_path = str(default_config_path)
 
     try:
         run = run_pipeline(config_path=config_path, output_dir=args.output_dir)

@@ -10,6 +10,7 @@ from .models import (
     RunBundle,
     TailMetrics,
 )
+from .simulation import SyntheticDataGenerator, SyntheticDataset
 
 __all__ = [
     "__version__",
@@ -19,8 +20,10 @@ __all__ = [
     "MonteCarloResult",
     "BenchmarkComparison",
     "RunBundle",
+    "SyntheticDataset",
     "default_config",
     "analyze",
     "generate_artifacts",
     "run_pipeline",
+    "SyntheticDataGenerator",
 ]

@@ -37,3 +37,8 @@ def compute_tail_metrics(
         exceedance_probability=exceedance_probability,
         sample_size=len(values),
     )
+
+
+def adaptive_threshold(floor_threshold: float, rms_abs_v: float, multiplier: float) -> float:
+    """Return an RMS-scaled threshold with a fixed lower bound."""
+    return max(floor_threshold, multiplier * max(rms_abs_v, 0.0))

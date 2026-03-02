@@ -33,3 +33,24 @@ jobs:
         run: uv build
       - name: Security scan
         run: uvx pip-audit
+
+  paper-repro:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+      - name: Sync frozen paper environment
+        run: uv sync --frozen --group dev --python 3.10
+      - name: Reproduce paper artifacts
+        run: uv run supraharmonic-pipeline --quickstart --output-dir manuscript/artifacts
+      - name: Verify artifact files
+        run: |
+          test -f manuscript/artifacts/table_1_scenario_matrix.csv
+          test -f manuscript/artifacts/table_6_analytical_vs_feeder_metrics.csv
+          test -f manuscript/artifacts/figure_1_transfer_impedance_vs_distance.png
+          test -f manuscript/artifacts/figure_8_allowable_density_screening_chart.png

@@ -1,0 +1,54 @@
+{
+  "prefix": "synthetic_latest",
+  "frequency_grid_khz": {
+    "min": 2.0,
+    "max": 150.0,
+    "n": 149
+  },
+  "sample_counts": {
+    "base_samples": 2048,
+    "sweep_samples": 1024,
+    "feeder_pred_samples": 2048,
+    "feeder_sim_samples": 2048
+  },
+  "generated_paths": {
+    "base": {
+      "observations": "synthetic_data\\synthetic_latest_observations.csv",
+      "per_frequency_samples": "synthetic_data\\synthetic_latest_per_frequency_samples.csv",
+      "statistics": "synthetic_data\\synthetic_latest_statistics.csv",
+      "analytical": "synthetic_data\\synthetic_latest_analytical.csv",
+      "validation": "synthetic_data\\synthetic_latest_validation.csv"
+    },
+    "density_sweep": "synthetic_data\\synthetic_latest_density_sweep_statistics.csv",
+    "coherence_sweep": "synthetic_data\\synthetic_latest_coherence_sweep_statistics.csv",
+    "spatial_process_sweep": "synthetic_data\\synthetic_latest_spatial_process_statistics.csv",
+    "density_sweep_multiseed": "synthetic_data\\synthetic_latest_density_sweep_multiseed.csv",
+    "coherence_sweep_multiseed": "synthetic_data\\synthetic_latest_coherence_sweep_multiseed.csv",
+    "spatial_process_multiseed": "synthetic_data\\synthetic_latest_spatial_process_multiseed.csv",
+    "feeder_specs": "synthetic_data\\synthetic_latest_feeder_specs.csv",
+    "feeder_kernel_profiles": "synthetic_data\\synthetic_latest_feeder_kernel_profiles.csv",
+    "feeder_validation_detail": "synthetic_data\\synthetic_latest_feeder_validation_detail.csv",
+    "feeder_validation_summary": "synthetic_data\\synthetic_latest_feeder_validation_summary.csv",
+    "feeder_termination_sensitivity": "synthetic_data\\synthetic_latest_feeder_termination_sensitivity.csv",
+    "manifest": "synthetic_data\\synthetic_latest_extended_manifest.json"
+  },
+  "notes": [
+    "All outputs are simulation-derived synthetic artifacts; no placeholder values are injected.",
+    "Feeder validation metrics use independent prediction/simulation sample splits."
+  ],
+  "n_rows": {
+    "observations": 305152,
+    "statistics": 149,
+    "density_sweep": 1490,
+    "coherence_sweep": 894,
+    "spatial_process_sweep": 447,
+    "density_sweep_multiseed": 7450,
+    "coherence_sweep_multiseed": 4470,
+    "spatial_process_multiseed": 2235,
+    "feeder_specs": 3,
+    "feeder_kernel_profiles": 45147,
+    "feeder_validation_detail": 447,
+    "feeder_validation_summary": 3,
+    "feeder_termination_sensitivity": 1212
+  }
+}

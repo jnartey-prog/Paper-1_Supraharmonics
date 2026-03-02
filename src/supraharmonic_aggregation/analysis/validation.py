@@ -12,9 +12,7 @@ def check_integrability_conditions(config: AnalysisConfig) -> IntegrabilityRepor
     finite_ok = config.region_radius_m > 0 and config.density > 0
     asymptotic_ok = config.kernel_alpha > 0 and config.admittance_s >= 0
     details = (
-        "Finite-domain conditions satisfied."
-        if finite_ok
-        else "Finite-domain conditions violated."
+        "Finite-domain conditions satisfied." if finite_ok else "Finite-domain conditions violated."
     )
     if asymptotic_ok:
         details += " Asymptotic attenuation condition satisfied."

@@ -10,8 +10,12 @@ SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-from supraharmonic_aggregation.cli import main
+
+def main() -> int:
+    from supraharmonic_aggregation.cli import main as cli_main
+
+    return cli_main(["--quickstart", "--output-dir", "manuscript/artifacts"])
 
 
 if __name__ == "__main__":
-    raise SystemExit(main(["--quickstart", "--output-dir", "manuscript/artifacts"]))
+    raise SystemExit(main())
