@@ -92,10 +92,11 @@ def need_cols(df: pd.DataFrame, cols: list[str], label: str) -> None:
         raise ValueError(f"{label}: missing columns {miss}")
 
 
-def load_inputs(syn_dir: Path, bench_dir: Path) -> Inputs:
+def load_inputs(syn_dir: Path, bench_dir: Path, *, require_bench: bool = True) -> Inputs:
     sp = {k: syn_dir / v for k, v in REQ_SYN.items()}
     bp = {k: bench_dir / v for k, v in REQ_BENCH.items()}
-    for p in list(sp.values()) + list(bp.values()):
+    required_paths = list(sp.values()) + (list(bp.values()) if require_bench else [])
+    for p in required_paths:
         if not p.exists():
             raise FileNotFoundError(p)
 
@@ -104,11 +105,18 @@ def load_inputs(syn_dir: Path, bench_dir: Path) -> Inputs:
     samples = pd.read_csv(sp["samples"])
     stats = pd.read_csv(sp["stats"])
     val = pd.read_csv(sp["val"])
-    bench_pf = pd.read_csv(bp["perfreq"])
-    bench_sum = pd.read_csv(bp["summary"])
-    bench_multi = pd.read_csv(bp["multi"])
-    bench_multi_agg = pd.read_csv(bp["multi_agg"])
-    bench_cfg = json.loads(bp["cfg"].read_text(encoding="utf-8"))
+    if require_bench:
+        bench_pf = pd.read_csv(bp["perfreq"])
+        bench_sum = pd.read_csv(bp["summary"])
+        bench_multi = pd.read_csv(bp["multi"])
+        bench_multi_agg = pd.read_csv(bp["multi_agg"])
+        bench_cfg = json.loads(bp["cfg"].read_text(encoding="utf-8"))
+    else:
+        bench_pf = pd.DataFrame()
+        bench_sum = pd.DataFrame()
+        bench_multi = pd.DataFrame()
+        bench_multi_agg = pd.DataFrame()
+        bench_cfg = {}
     obp = {k: bench_dir / v for k, v in OPT_BENCH.items()}
 
     need_cols(
@@ -123,11 +131,12 @@ def load_inputs(syn_dir: Path, bench_dir: Path) -> Inputs:
         ],
         "stats",
     )
-    need_cols(
-        bench_pf,
-        ["benchmark_name", "frequency_khz", "relative_error_rms", "relative_error_p95"],
-        "bench_pf",
-    )
+    if require_bench:
+        need_cols(
+            bench_pf,
+            ["benchmark_name", "frequency_khz", "relative_error_rms", "relative_error_p95"],
+            "bench_pf",
+        )
 
     op = {k: syn_dir / v for k, v in OPT.items()}
 
@@ -212,9 +221,9 @@ def save_csv(df: pd.DataFrame, out: Path, name: str) -> str:
     return str(p)
 
 
-def save_fig(fig: plt.Figure, out: Path, name: str) -> str:
+def save_fig(fig: plt.Figure, out: Path, name: str, *, dpi: int = MANUSCRIPT_DPI) -> str:
     p = out / name
-    save_figure_bundle(fig, p, dpi=MANUSCRIPT_DPI)
+    save_figure_bundle(fig, p, dpi=dpi)
     return str(p)
 
 
@@ -223,9 +232,15 @@ def style(ax: plt.Axes) -> None:
 
 
 def _add_figure_footer(
-    fig: plt.Figure, lines: list[str], *, fontsize: int = 8, color: str = "#444444"
+    fig: plt.Figure,
+    lines: list[str],
+    *,
+    fontsize: int = 8,
+    color: str = "#444444",
+    bottom: float | None = None,
 ) -> None:
-    fig.subplots_adjust(bottom=0.29 if len(lines) >= 2 else 0.22)
+    bottom_margin = bottom if bottom is not None else (0.29 if len(lines) >= 2 else 0.22)
+    fig.subplots_adjust(bottom=bottom_margin)
     y = 0.006
     for line in lines:
         fig.text(0.5, y, line, ha="center", va="bottom", fontsize=fontsize, color=color)
@@ -274,6 +289,144 @@ def _panel_label(ax: plt.Axes, label: str) -> None:
         fontweight="semibold",
         bbox=dict(facecolor="white", alpha=0.90, edgecolor="none", pad=0.2),
     )
+
+
+def _make_appendix_monte_carlo_convergence_figure(i: Inputs, out: Path) -> str | None:
+    required = {"frequency_khz", "sample_id", "abs_v"}
+    if not required.issubset(i.samples.columns):
+        return None
+    samples = i.samples.copy()
+    if samples.empty:
+        return None
+
+    target_frequency_khz = 30.0
+    available_freqs = sorted(samples["frequency_khz"].unique().tolist())
+    if not available_freqs:
+        return None
+    selected_frequency = min(available_freqs, key=lambda x: abs(float(x) - target_frequency_khz))
+    sub = samples[np.isclose(samples["frequency_khz"], selected_frequency)].copy()
+    if sub.empty:
+        return None
+    sub = sub.sort_values("sample_id")
+    values = sub["abs_v"].to_numpy(dtype=float)
+    if values.size < 2:
+        return None
+
+    requested_k = [256, 512, 1024, 2048, 4096]
+    k_values = [k for k in requested_k if k <= values.size]
+    if not k_values:
+        return None
+
+    n_paths = 48
+    rng = np.random.default_rng(20260220)
+    rms_paths = np.full((n_paths, len(k_values)), np.nan, dtype=float)
+    p99_paths = np.full((n_paths, len(k_values)), np.nan, dtype=float)
+    for path_idx in range(n_paths):
+        perm = rng.permutation(values.size)
+        shuffled = values[perm]
+        csum_sq = np.cumsum(shuffled**2)
+        for j, k in enumerate(k_values):
+            prefix = shuffled[:k]
+            rms_paths[path_idx, j] = float(np.sqrt(csum_sq[k - 1] / k))
+            p99_paths[path_idx, j] = float(np.percentile(prefix, 99.0))
+
+    rms_med = np.nanmedian(rms_paths, axis=0)
+    rms_lo = np.nanquantile(rms_paths, 0.025, axis=0)
+    rms_hi = np.nanquantile(rms_paths, 0.975, axis=0)
+    p99_med = np.nanmedian(p99_paths, axis=0)
+    p99_lo = np.nanquantile(p99_paths, 0.025, axis=0)
+    p99_hi = np.nanquantile(p99_paths, 0.975, axis=0)
+
+    rms_full = float(np.sqrt(np.mean(values**2)))
+    p99_full = float(np.percentile(values, 99.0))
+    use_log_x = len(k_values) > 1
+    xlim_left = max(1.0, float(min(k_values)) * 0.85)
+    xlim_right = float(max(k_values)) * 1.15
+
+    fig, axes = plt.subplots(1, 2, figsize=(8.8, 3.9), sharex=True)
+    manuscript_colors = {
+        "rms": "#0B4F8A",
+        "p99": "#B3570A",
+        "reference": "#2D2D2D",
+        "interval": 0.12,
+    }
+    axis_defs = [
+        (
+            axes[0],
+            "RMS(|V|) [V]",
+            rms_med,
+            rms_lo,
+            rms_hi,
+            rms_full,
+            "RMS estimate",
+            "Full-sample RMS",
+            manuscript_colors["rms"],
+        ),
+        (
+            axes[1],
+            "P99(|V|) [V]",
+            p99_med,
+            p99_lo,
+            p99_hi,
+            p99_full,
+            "P99 estimate",
+            "Full-sample P99",
+            manuscript_colors["p99"],
+        ),
+    ]
+    for idx, (ax, ylabel, med, lo, hi, ref, series_label, ref_label, color) in enumerate(axis_defs):
+        ax.fill_between(
+            k_values,
+            lo,
+            hi,
+            color=color,
+            alpha=manuscript_colors["interval"],
+            linewidth=1.1,
+            edgecolor=color,
+            label="95% interval",
+            zorder=1,
+        )
+        ax.plot(
+            k_values,
+            med,
+            marker="o",
+            lw=3.0,
+            color=color,
+            markeredgecolor="white",
+            markeredgewidth=0.9,
+            markersize=7.0,
+            label=series_label,
+            zorder=3,
+        )
+        ax.axhline(
+            ref,
+            linestyle="--",
+            lw=2.0,
+            color=manuscript_colors["reference"],
+            alpha=0.96,
+            label=ref_label,
+            zorder=2,
+        )
+        ax.set_ylabel(ylabel, fontsize=14, labelpad=8, fontweight="semibold")
+        ax.set_xlabel("Monte Carlo realizations (K)", fontsize=12, labelpad=8, fontweight="semibold")
+        ax.set_xticks(k_values)
+        if use_log_x:
+            ax.set_xscale("log", base=2)
+        ax.set_xlim(xlim_left, xlim_right)
+        ax.tick_params(axis="both", labelsize=12, width=1.3, length=5.0)
+        for spine in ax.spines.values():
+            spine.set_linewidth(1.2)
+        style(ax)
+        ax.legend(frameon=False, fontsize=11, loc="upper right", handlelength=2.2)
+        _panel_label(ax, "(a)" if idx == 0 else "(b)")
+
+    fig.subplots_adjust(bottom=0.30, top=0.84, wspace=0.20)
+    fig.suptitle(
+        f"Monte Carlo Convergence of RMS and P99 Estimates (reference frequency: {selected_frequency:.0f} kHz)",
+        fontsize=17,
+        fontweight="semibold",
+    )
+    return save_fig(fig, out, "figure_s1_monte_carlo_convergence_rms_p99.png", dpi=900)
 
 
 def make_tables(i: Inputs, out: Path) -> dict[str, str]:
@@ -2005,6 +2158,10 @@ def make_figures(i: Inputs, out: Path) -> dict[str, str]:
 
         g["figure_8_8b_composite"] = save_fig(fig, out, "figure_8_8b_composite.png")
 
+    appendix_convergence = _make_appendix_monte_carlo_convergence_figure(i, out)
+    if appendix_convergence is not None:
+        g["figure_s1_monte_carlo_convergence_rms_p99"] = appendix_convergence
+
     return g
 
 
@@ -2078,6 +2235,13 @@ def make_coverage(out: Path, gen: dict[str, str], i: Inputs) -> str:
             "file": gen.get("figure_8b", ""),
         },
         {
+            "item": "Appendix Figure S1",
+            "status": "generated"
+            if "figure_s1_monte_carlo_convergence_rms_p99" in gen
+            else "unavailable",
+            "file": gen.get("figure_s1_monte_carlo_convergence_rms_p99", ""),
+        },
+        {
             "item": "Table G1",
             "status": "generated" if "table_g1" in gen else "unavailable",
             "file": gen.get("table_g1", ""),
@@ -2107,7 +2271,7 @@ def run(
             else ("*.csv", "*.png", "*.pdf", "*.json"),
         )
     out.mkdir(parents=True, exist_ok=True)
-    i = load_inputs(syn, bench)
+    i = load_inputs(syn, bench, require_bench=not figures_only)
     gen = {}
     if not figures_only:
         gen.update(make_tables(i, out))
@@ -2198,6 +2362,13 @@ def run(
             "asset_id": "Figure 8b",
             "file": gen.get("figure_8b", ""),
             "status": "generated" if i.density is not None else "partial",
+        },
+        {
+            "asset_id": "Appendix Figure S1",
+            "file": gen.get("figure_s1_monte_carlo_convergence_rms_p99", ""),
+            "status": "generated"
+            if "figure_s1_monte_carlo_convergence_rms_p99" in gen
+            else "unavailable",
         },
         {
             "asset_id": "Table G1",
