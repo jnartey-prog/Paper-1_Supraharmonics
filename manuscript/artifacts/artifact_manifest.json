@@ -1,0 +1,23 @@
+{
+  "output_dir": "manuscript\\artifacts",
+  "generated": {
+    "figure_1": "manuscript\\artifacts\\figure_1_transfer_impedance_vs_distance.png",
+    "figure_2": "manuscript\\artifacts\\figure_2_rms_vs_density.png",
+    "figure_2b": "manuscript\\artifacts\\figure_2b_rms_fullband_heatmap.png",
+    "figure_3": "manuscript\\artifacts\\figure_3_percentile_design_curves.png",
+    "figure_2_3_composite": "manuscript\\artifacts\\figure_2_3_composite.png",
+    "figure_4": "manuscript\\artifacts\\figure_4_ccdf_ppp_cluster_repulsive.png",
+    "figure_6": "manuscript\\artifacts\\figure_6_inhomogeneous_intensity_outcomes.png",
+    "figure_4_6_composite": "manuscript\\artifacts\\figure_4_6_composite.png",
+    "figure_5": "manuscript\\artifacts\\figure_5_phase_coherence_sweep.png",
+    "figure_7": "manuscript\\artifacts\\figure_7_feeder_validation_scatter.png",
+    "figure_8": "manuscript\\artifacts\\figure_8_allowable_density_screening_chart.png",
+    "figure_8b": "manuscript\\artifacts\\figure_8b_allowable_density_threshold_sensitivity.png",
+    "figure_8_8b_composite": "manuscript\\artifacts\\figure_8_8b_composite.png",
+    "figure_s2_p99_resonance_sensitivity": "manuscript\\artifacts\\figure_s2_p99_resonance_sensitivity.png",
+    "figure_s3_denom_safeguard_activation_impact": "manuscript\\artifacts\\figure_s3_denom_safeguard_activation_impact.png",
+    "figure_s4_mark_distribution_family_sensitivity": "manuscript\\artifacts\\figure_s4_mark_distribution_family_sensitivity.png",
+    "figure_s1_monte_carlo_convergence_rms_p99": "manuscript\\artifacts\\figure_s1_monte_carlo_convergence_rms_p99.png"
+  },
+  "strict_no_dummy_policy": "No placeholder numeric artifacts are synthesized."
+}

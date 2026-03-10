@@ -22,6 +22,8 @@ class ExponentialKernel:
 
     alpha: float
     resonance_scale: float = 0.0
+    resonance_center_hz: float | None = None
+    resonance_width_hz: float | None = None
     r_ohm_per_km: float = 0.35
     l_h_per_km: float = 0.45e-3
     c_f_per_km: float = 120e-9
@@ -50,8 +52,17 @@ class ExponentialKernel:
         if self.resonance_scale <= 0:
             return 1.0
         lc = max(self.l_h_per_km * self.c_f_per_km, 1e-18)
-        f0_hz = 1.0 / (2.0 * math.pi * math.sqrt(lc))
-        width_hz = max(0.2 * f0_hz, 1.0)
+        nominal_f0_hz = 1.0 / (2.0 * math.pi * math.sqrt(lc))
+        f0_hz = (
+            nominal_f0_hz
+            if self.resonance_center_hz is None
+            else max(float(self.resonance_center_hz), 1.0)
+        )
+        width_hz = (
+            max(0.2 * f0_hz, 1.0)
+            if self.resonance_width_hz is None
+            else max(float(self.resonance_width_hz), 1.0)
+        )
         detuning = (frequency_hz - f0_hz) / width_hz
         return 1.0 + self.resonance_scale / (1.0 + detuning * detuning)
 

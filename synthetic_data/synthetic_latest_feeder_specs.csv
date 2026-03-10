@@ -1,4 +1,0 @@
-feeder_id,feeder_name,feeder_length_km,r_ohm_per_km,l_h_per_km,c_f_per_km,source_impedance_ohm,load_impedance_ohm,kernel_alpha,resonance_scale,skin_effect_coeff,dielectric_tan_delta
-A,urban_short,1.0,0.24,0.00038,1.9e-07,0.24,0.48,0.24,0.03,0.14,0.012
-B,suburban_medium,2.0,0.4,0.00052,1.2e-07,0.34,0.62,0.32,0.025,0.2,0.016
-C,rural_long,5.0,0.62,0.00078,8.2e-08,0.46,0.84,0.4,0.02,0.28,0.022
